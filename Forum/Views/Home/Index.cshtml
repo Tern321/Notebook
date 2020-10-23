@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div id="contentions"></div>
+<button style="text-align: left; position: fixed; left: 0px; top: 0px; width: 200px; height: 20px; " onclick="Controller.viewAll()">all</button>
+<div id="topics"></div>
+<div class="menuStyle" style="margin: 0px;">
+
+    <div class="uiButtons">
+        <textarea id="argumentTextArea" style="width:320px; height:73px;"></textarea>
+        <div>
+            <div>
+                <div>
+                    <textarea id="loginTextArea" style="width:180px; height:20px;" placeholder="логин"></textarea>
+                    <button style="background-color:#7bfc03;" onclick="Controller.changeContentionColor('#7bfc03')"> Text</button>
+                    <button style="background-color:#f8fc03;" onclick="Controller.changeContentionColor('#f8fc03')"> Text</button>
+                    <button style="background-color:#03fcbe;" onclick="Controller.changeContentionColor('#03fcbe')"> Text</button>
+                    <button class="UIBbutton" onclick="Controller.addContention()">Добавить</button>
+                    <button class="UIBbutton" onclick="Controller.changeContention()">Изменить</button>
+                    <button class="UIBbutton" onclick="Controller.createTopicFromContention()" style="background-color: #e6e6e6;">сделать топиком</button>
+                    <button class="UIBbutton" onclick="">перенести(shift+click)</button>
+                </div>
+                <div>
+                    <textarea id="encriptionKeyTextArea" style="width:180px; height:20px;" placeholder="ключ для шифрования"></textarea>
+                    <button style="background-color:#FFF;" onclick="Controller.changeContentionColor('#FFF')"> Text</button>
+                    <button style="background-color:#fc03f0;" onclick="Controller.changeContentionColor('#fc03f0')"> Text</button>
+                    <button style="background-color:#fc3503;" onclick="Controller.changeContentionColor('#fc3503')"> Text</button>
+                    <button class="UIBbutton" onclick="Controller.addLink()">добавить ссылку</button>
+                    <button class="UIBbutton" onclick="Controller.deleteContention()">удалить(del)</button>
+                    <button class="UIBbutton" onclick="Controller.addSelectedToArchive()">(archive)</button>
+                    <button class="UIBbutton" onclick="Controller.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть(right+click)</button>
+
+                </div>
+            </div>
+            <div>
+                <button class="UIBbutton" onclick="Controller.reload()">Reload</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,182 @@
+[
+  {
+    "id": 6047,
+    "parentContentionId": 15,
+    "text": "статья"
+  },
+  {
+    "id": 6048,
+    "parentContentionId": 6047,
+    "text": "доступ"
+  },
+  {
+    "id": 6049,
+    "parentContentionId": 6048,
+    "text": "логин"
+  },
+  {
+    "id": 6050,
+    "parentContentionId": 6048,
+    "text": "пароль"
+  },
+  {
+    "id": 6051,
+    "parentContentionId": 6048,
+    "text": "номер версии"
+  },
+  {
+    "id": 6052,
+    "parentContentionId": 6051,
+    "text": "чтобы не позволять затирать изменения при одновременной работе"
+  },
+  {
+    "id": 6053,
+    "parentContentionId": 6048,
+    "text": "шифрование на клиенте"
+  },
+  {
+    "id": 6054,
+    "parentContentionId": 6048,
+    "text": "доступ на чтение"
+  },
+  {
+    "id": 6055,
+    "parentContentionId": 6048,
+    "text": "доступ на удаление"
+  },
+  {
+    "id": 6056,
+    "parentContentionId": 6048,
+    "text": "доступ на добавление в ветку"
+  },
+  {
+    "id": 6069,
+    "parentContentionId": 6048,
+    "text": "право писать на форум"
+  },
+  {
+    "id": 6057,
+    "parentContentionId": 6047,
+    "text": "реализация"
+  },
+  {
+    "id": 6058,
+    "parentContentionId": 6057,
+    "text": "сервер"
+  },
+  {
+    "id": 6061,
+    "parentContentionId": 6058,
+    "text": "ограничение по трафику"
+  },
+  {
+    "id": 6062,
+    "parentContentionId": 6058,
+    "text": "ограничение по обьему"
+  },
+  {
+    "id": 6059,
+    "parentContentionId": 6057,
+    "text": "клиент"
+  },
+  {
+    "id": 6060,
+    "parentContentionId": 6059,
+    "text": "страница, получающая json, расшифровывающая его и отображающая результат"
+  },
+  {
+    "id": 6064,
+    "parentContentionId": 6057,
+    "text": "сделать это через blazor?"
+  },
+  {
+    "id": 6065,
+    "parentContentionId": 6057,
+    "text": "json"
+  },
+  {
+    "id": 6066,
+    "parentContentionId": 6065,
+    "text": "кто добавил"
+  },
+  {
+    "id": 6067,
+    "parentContentionId": 6065,
+    "text": "когда добавил"
+  },
+  {
+    "id": 6073,
+    "parentContentionId": 6065,
+    "text": "экспорт"
+  },
+  {
+    "id": 6068,
+    "parentContentionId": 6057,
+    "text": "добавление в cookies данных по веткам"
+  },
+  {
+    "id": 6070,
+    "parentContentionId": 6057,
+    "text": "шифрование"
+  },
+  {
+    "id": 6071,
+    "parentContentionId": 6070,
+    "text": "https:\/\/crypto.stanford.edu\/sjcl\/"
+  },
+  {
+    "id": 6072,
+    "parentContentionId": 6070,
+    "text": "https:\/\/github.com\/asmcrypto\/asmcrypto.js"
+  },
+  {
+    "id": 6074,
+    "parentContentionId": 6070,
+    "text": "http:\/\/www.hanewin.net\/encrypt\/aes\/aes.htm"
+  },
+  {
+    "id": 6075,
+    "parentContentionId": 6074,
+    "text": "hanewin.net\/encrypt\/aes\/aes-test.htm"
+  },
+  {
+    "id": 6063,
+    "parentContentionId": 6047,
+    "text": "возможность из ветки ссылаться на ветку"
+  },
+  {
+    "id": 6076,
+    "parentContentionId": 6047,
+    "text": "ветка"
+  },
+  {
+    "id": 6077,
+    "parentContentionId": 6076,
+    "text": "она же топик?"
+  },
+  {
+    "id": 6078,
+    "parentContentionId": 6076,
+    "text": "у нее есть версия, чтобы не терять данные при обновлении"
+  },
+  {
+    "id": 6083,
+    "parentContentionId": 6047,
+    "text": "как отрисовать"
+  },
+  {
+    "id": 6084,
+    "parentContentionId": 6083,
+    "text": "если рисовать не таблицей"
+  },
+  {
+    "id": 6085,
+    "parentContentionId": 6047,
+    "text": "добавить к серверу версию данных"
+  },
+  {
+    "id": 6086,
+    "parentContentionId": 6047,
+    "text": "добавить возвращаемый тип значения?"
+  }
+]

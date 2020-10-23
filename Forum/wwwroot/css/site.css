@@ -1,0 +1,46 @@
+﻿
+
+.menuStyle {
+    position: fixed; /* Фиксированное положение */
+    left: 200px;
+    top: 0; /* Левый нижний угол */
+
+}
+
+.topicsStyle {
+    font-size: 120%;
+    font-family: monospace;
+}
+
+*, ::after, ::before {
+    box-sizing: border-box;
+}
+
+.verticalContainer {
+    height: 14px;
+    border: 1px solid black;
+}
+
+.verticalCenter {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    line-height: 80%;
+    padding-bottom: 3px;
+}
+
+.uiButtons {
+    vertical-align: middle;
+    display: flex;
+}
+
+.UIBbutton {
+    width: 160px;
+    background-color: #FFF;
+    border-width: 1px;
+    margin: 0px;
+}
+
+/*font-family: monospace;*/
