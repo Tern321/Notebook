@@ -2,7 +2,7 @@ function enableInput() {
     document.onkeyup = keyUp;
     document.onkeydown = checkKeycode;
     document.addEventListener('keydown', function (e) {
-        console.log(e);
+        //console.log(e);
         if (e.keyCode == 46) {
             Controller.deleteContention();
         }

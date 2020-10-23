@@ -20,6 +20,7 @@
                     <button class="UIBbutton" onclick="Controller.changeContention()">Изменить</button>
                     <button class="UIBbutton" onclick="Controller.createTopicFromContention()" style="background-color: #e6e6e6;">сделать топиком</button>
                     <button class="UIBbutton" onclick="">перенести(shift+click)</button>
+                    <button class="UIBbutton" onclick="Controller.import()">import</button>
                 </div>
                 <div>
                     <textarea id="encriptionKeyTextArea" style="width:180px; height:20px;" placeholder="ключ для шифрования"></textarea>
@@ -30,7 +31,7 @@
                     <button class="UIBbutton" onclick="Controller.deleteContention()">удалить(del)</button>
                     <button class="UIBbutton" onclick="Controller.addSelectedToArchive()">(archive)</button>
                     <button class="UIBbutton" onclick="Controller.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть(right+click)</button>
-
+                    <button class="UIBbutton" onclick="Controller.export()">export</button>
                 </div>
             </div>
             <div>

@@ -1,13 +1,11 @@
 ﻿
-function enableInput() {
-
+function enableInput()
+{
     document.onkeyup = keyUp;
     document.onkeydown = checkKeycode;
 
-
-
     document.addEventListener('keydown', function (e) {
-        console.log(e);
+        //console.log(e);
         if (e.keyCode == 46) {
             Controller.deleteContention();
         }
@@ -28,8 +26,8 @@ function keyUp(event) {
     }
     //console.log("ctrlKey:" + event.ctrlKey + " shiftKey:" + event.shiftKey + " altKey:" + event.altKey + " keyCode:" + event.keyCode);
 }
-function checkKeycode(event) {
-
+function checkKeycode(event)
+{
     //console.log("ctrlKey:" + event.ctrlKey + " shiftKey:" + event.shiftKey + " altKey:" + event.altKey + " keyCode:" + event.keyCode);
     //if ((event.shiftKey) && (event.keyCode == 1071)) {
     //    moveContention();

@@ -2,47 +2,57 @@
 
     static topicsWidth = 200;
     static widthMap: Map<string, number>;
-
-    static addCleanObjects(parentElement: Element, contention: Contention, depth: number, x: number, y: number, drawAll: boolean) {
-        parentElement?.appendChild(UIDrawer.contentionHtml(contention, x, y));
+    static heightMap: Map<string, number>;
+    static depthMap: Map<string, number>;
+    static addCleanObjects(parentElement: Element, contention: Contention, depth: number, x: number, y: number, drawAll: boolean)
+    {
+        //console.log("addCleanObjects");
+        //console.log(contention);
+        parentElement.appendChild(UIDrawer.contentionHtml(contention, x, y));
 
         x += UIDrawer.widthForDepth(depth);
 
         if (!contention.collapce || Controller.topicId == contention.id || drawAll) { 
-        contention.childs.forEach(function (childContentionId) {
+        contention.childs().forEach(function (childContentionId) {
             var childContention = Model.contentionForId(childContentionId);
-            UIDrawer.addCleanObjects(parentElement, childContention, depth + 1, x, y, drawAll)
-            y += childContention.height;
+            UIDrawer.addCleanObjects(parentElement, childContention, depth + 1, x, y, drawAll);
+            y += UIDrawer.heightMap.get(childContention.id);
         });
         }
     }
+
     static calculateSize(contention: Contention, depth: number, drawAll: boolean)
     {
-        contention.depth = depth;
+        this.depthMap.set(contention.id, depth);
 
+        // width
         var savedWidth: number = this.widthMap.get(depth.toString());
         if (!savedWidth || savedWidth < contention.width) {
             this.widthMap.set(depth.toString(), contention.width);
         }
 
+        // height
         // если нет листьев, если высота больше чем у листьев
+        var height = contention.height;
         var childsHeight = 0;
         if (!contention.collapce || Controller.topicId == contention.id || drawAll) {
-            contention.childs.forEach(function (childContentionId) {
+            contention.childs().forEach(function (childContentionId) {
                 var childContention = Model.contentionForId(childContentionId);
                 childsHeight += UIDrawer.calculateSize(childContention, depth + 1, drawAll);
             });
 
-            if (childsHeight > contention.height) {
-                contention.height = childsHeight;
+            if (childsHeight > height) {
+                height = childsHeight;
             }
         }
-        return contention.height;
+        this.heightMap.set(contention.id, height);
+        return height;
     }
 
     static widthForDepth(depth: number): number {
         return this.widthMap.get(depth.toString()) + 4;
     }
+
     static topicIndex = 0;
     static drawTopics(topicContention: Contention, depth: number) {
         
@@ -51,7 +61,7 @@
         const element = document.createElement("div");
         element.innerHTML = UIDrawer.topicButtonHtml(topicContention, UIDrawer.topicIndex, depth);
         d1.appendChild(element);
-        topicContention.childTopics.forEach(function (childTopicId) {
+        topicContention.childTopics().forEach(function (childTopicId) {
             var childTopic = Model.contentionForId(childTopicId);
             UIDrawer.drawTopics(childTopic, depth + 1);
         });
@@ -66,42 +76,42 @@
     static drawUI(drawAll: boolean) {
         var scrollX = window.scrollX;
         var scrollY = window.scrollY;
-        
+
+        var rootKey: string = Controller.topicId;
         
 
         Controller.changeSelectedContention = false;
         var starX = UIDrawer.topicsWidth;
         var startY = 74;
-        //Model.updateChilds(false);
+
         var topicsDiv = document.getElementById("topics");
         topicsDiv.innerHTML = "";
         UIDrawer.topicIndex = 0;
         UIDrawer.drawTopics(Model.contentionsMap.get("root"), 0);
-        // add raw elements for size calculation
 
+        // add raw elements for size calculation
         const contentionsDiv = document.getElementById("contentions");
         contentionsDiv.innerHTML = "";
 
-        Model.contentionsMap.forEach((contention: Contention, id: string) => {
-            contentionsDiv?.appendChild(UIDrawer.contentionHtmlRaw(contention));
-        });
+        var rawElementIdList = [];
+        this.recursiveAddRawToDom(Model.contentionForId(rootKey), contentionsDiv, rawElementIdList);
 
         // remove raw objects and save size
-        Model.contentionsMap.forEach((contention: Contention, id: string) => {
-            //console.log(contention);
-            var element = document.getElementById(contention.id);
-            contention.width = element.offsetWidth;
-            contention.height = element.offsetHeight;
-            //console.log("measured height for contention " + contention.text + " " + contention.height);
-            element.remove();
-            //element.parentElement.remove(); // deletes topics oO
+        rawElementIdList.forEach(function (contentionId) {
+            //console.log("calcuate size for " + contentionId);
+            var contention = Model.contentionForId(contentionId);
+            var element = document.getElementById(contentionId);
+            if (element) {
+                contention.width = element.offsetWidth;
+                contention.height = element.offsetHeight;
+            }
         });
 
-        // calculate height
-        var rootKey: string = Controller.topicId;
-        //console.log("calculateHeight");
         UIDrawer.widthMap = new Map();
+        UIDrawer.heightMap = new Map();
+        UIDrawer.depthMap = new Map();
         UIDrawer.calculateSize(Model.contentionsMap.get(rootKey), 0, drawAll);
+
         // add clean objects
         contentionsDiv.innerHTML = "";
         this.addCleanObjects(contentionsDiv, Model.contentionsMap.get(rootKey), 0, starX, startY, drawAll);
@@ -109,6 +119,19 @@
         UIDrawer.selectElement(document.getElementById(Controller.selectedContentionId));
 
         window.scrollBy(scrollX, scrollY);
+    }
+    static recursiveAddRawToDom(contention: Contention, contentionsDiv, rawElementIdList: string[]) {
+        if (!contention.width || contention.width == 0) {
+            rawElementIdList.push(contention.id);
+            console.log("rawElementIdList " + contention.id);
+            var element = UIDrawer.contentionHtmlRaw(contention);
+            contentionsDiv.appendChild(element);
+        }
+
+        contention.childs().forEach(function (childContentionId) {
+            var childContention = Model.contentionForId(childContentionId);
+            UIDrawer.recursiveAddRawToDom(childContention, contentionsDiv, rawElementIdList);
+        });
     }
 
     static selectElement(element: HTMLElement) {
@@ -129,7 +152,7 @@
         }
     }
 
-    static contentionHtmlRaw(contention: Contention) {
+    static contentionHtmlRaw(contention: Contention): HTMLElement {
         const element = document.createElement("div");
 
         var textString = "<div class='verticalCenter' id=" + contention.id + "  style=\"border: 3px solid #000000;min-width: 100px; max-width: 320px; display: inline-block\" >" +contention.text + "</div>";
@@ -147,9 +170,11 @@
         if (contention.collapce) {
             color = "#9b9bff";
         }
-        var positionString: string = "position: absolute; top: " + y + "px; left: " + x + "px; width: " + (UIDrawer.widthForDepth(contention.depth) + 1) + "px; height: " + (contention.height + 1) + "px; min-width: 100px; max-width: 321px; ";
+        var depth = UIDrawer.depthMap.get(contention.id);
+        var height = UIDrawer.heightMap.get(contention.id);
+        var positionString: string = "position: absolute; top: " + y + "px; left: " + x + "px; width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px; min-width: 100px; max-width: 321px; ";
         //console.log("final heoght for contention " + contention.text + " " + contention.height);
-        var sizeString: string = "width: " + (UIDrawer.widthForDepth(contention.depth) + 1) + "px; height: " + (contention.height + 1) + "px; min-width: 100px; max-width: 325px; ";
+        var sizeString: string = "width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px; min-width: 100px; max-width: 325px; ";
 
         //var textString = "<div selectable=true childDiv=true id=" + contention.id + " class=\"verticalCenter\">" + contention.text + "</div>";
         var textString = "<div class='verticalCenter' selectable='true' container='true' >" + contention.text + "</div>";

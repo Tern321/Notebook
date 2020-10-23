@@ -1,5 +1,3 @@
-
-
 class Controller {
 
     static topicId: string = "root";
@@ -7,56 +5,23 @@ class Controller {
     static currentVersion: number = 11;
     static changeSelectedContention: boolean = false;
     static shouldSaveContentionOrder: boolean = true;
-    static createTopicFromContention() {
-        var selectedcontention: Contention = Controller.selectedcontention();
 
-        selectedcontention.topic = !selectedcontention.topic;
-
-        Model.updateTopicsFor(selectedcontention.parentTopic());
-
-        Controller.saveUpdatedData();
-        if (selectedcontention.topic) {
-            Controller.topicId = selectedcontention.id;
-        }
-        UIDrawer.drawUI(false);
+    // selection
+    static selectContention(e) {
+        this.selectContentionById(e.getAttribute("id"));
     }
-    static changeContention() {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        var textArea: any = document.getElementById("argumentTextArea");
-        var text: string = textArea.value.trim();
-
-        if (text.length == 0) {
-            return;
-        }
-        selectedcontention.text = textArea.value;
-        textArea.value = "";
-        Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+    static selectContentionById(contentionId) {
+        console.log(Model.contentionForId(contentionId));
+        console.log(Model.contentionForId(contentionId).childs());
+        UIDrawer.deselectElement(document.getElementById(this.selectedContentionId));
+        UIDrawer.selectElement(document.getElementById(contentionId));
+        this.selectedContentionId = contentionId;
     }
-    static copyContentionText() {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        var textArea: any = document.getElementById("argumentTextArea");
-        textArea.value = selectedcontention.text;
-    }
-
-
     static selectedcontention(): Contention {
         return Model.contentionsMap.get(Controller.selectedContentionId);
     }
 
-    static changeContentionColor(color: string) {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        selectedcontention.color = color;
-        Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
-    }
-    static deleteContention() {
-        //console.log("removeContention " + Controller.selectedContentionId);
-        Model.removeContention(Controller.selectedContentionId)
-        Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
-    }
-
+    // move
     static moveContention(targetContentionId: string) {
 
         var testParents = Controller.selectedcontention();
@@ -87,7 +52,118 @@ class Controller {
         Controller.saveUpdatedData();
         UIDrawer.drawUI(false);
     }
+    static moveContentionSelection(keyCode: number) {
+        var leftKeyCode = 37;
+        var upKeyCode = 38;
+        var rightKeyCode = 39;
+        var downKeyCode = 40;
+        //switch
+        if (keyCode == leftKeyCode) {
+            var contentionIdToSelect = this.selectedcontention().parentContentionId;
+            if (contentionIdToSelect && this.contentionIsVisible(contentionIdToSelect)) {
+                this.selectContentionById(contentionIdToSelect);
+            }
+        }
+        if (keyCode == rightKeyCode) {
+            var contentionIdToSelect = this.selectedcontention().childs()[0];
+            if (contentionIdToSelect && this.contentionIsVisible(contentionIdToSelect)) {
+                this.selectContentionById(contentionIdToSelect);
+            }
+        }
+        if (keyCode == upKeyCode) {
+            var previosContention = this.selectedcontention().previosOrDefault();
+            if (previosContention) {
+                this.selectContentionById(previosContention.id);
+            }
+            else {
+                var offset = 0;
+                var contention = this.selectedcontention();
+                while (contention && !previosContention) {
+                    contention = contention.parentContention();
+                    previosContention = contention.previosOrDefault();
+                    offset++;
+                }
+                contention = previosContention;
+                while (contention.childs().length > 0 && offset > 0 && this.contentionIsVisible(contention.childs()[contention.childs().length - 1])) {
+                    contention = Model.contentionForId(contention.childs()[contention.childs().length - 1]);
+                    offset--;
+                }
+                if (contention) {
+                    this.selectContentionById(contention.id);
+                }
+            }
+        }
+        if (keyCode == downKeyCode) {
 
+            var nextContention = this.selectedcontention().nextOrDefault();
+            if (nextContention) {
+                this.selectContentionById(nextContention.id);
+            }
+            else {
+                var offset = 0;
+                var contention = this.selectedcontention();
+                while (contention && !nextContention) {
+                    contention = contention.parentContention();
+                    nextContention = contention.nextOrDefault();
+                    offset++;
+                }
+                contention = nextContention;
+                while (contention.childs().length > 0 && offset > 0 && this.contentionIsVisible(contention.childs()[0])) {
+                    contention = Model.contentionForId(contention.childs()[0]);
+                    offset--;
+                }
+                if (contention) {
+                    this.selectContentionById(contention.id);
+                }
+            }
+        }
+    }
+    static moveContentionUp(up: boolean) {
+        this.shouldSaveContentionOrder = true;
+        var parentContention = this.selectedcontention().parentContention();
+        var index = parentContention.childs().indexOf(this.selectedContentionId);
+        if (up) {
+            if (index > 0) {
+                // UIDrawer.switchElements
+                var secondElementId = parentContention.childs()[index - 1];
+                UIDrawer.switchElements(document.getElementById(this.selectedContentionId), document.getElementById(secondElementId));
+
+                parentContention.childs()[index] = secondElementId;
+                parentContention.childs()[index - 1] = this.selectedContentionId;
+            }
+        }
+        else {
+            if (index < parentContention.childs().length - 1) {
+                var secondElementId = parentContention.childs()[index + 1];
+                UIDrawer.switchElements(document.getElementById(secondElementId), document.getElementById(this.selectedContentionId));
+
+                parentContention.childs()[index] = secondElementId;
+                parentContention.childs()[index + 1] = this.selectedContentionId;
+            }
+        }
+    }
+    static saveContentionOrder() {
+        if (this.shouldSaveContentionOrder) {
+            this.shouldSaveContentionOrder = false;
+
+            Controller.saveUpdatedData();
+            UIDrawer.drawUI(false);
+        }
+    }
+
+    // add
+    static addContention() {
+        if (!Controller.selectedContentionId) {
+            Controller.selectedContentionId = Controller.topicId;
+        }
+
+        var textArea: any = document.getElementById("argumentTextArea");
+        Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
+        textArea.value = "";
+        textArea.focus();
+        Controller.saveUpdatedData();
+        UIDrawer.drawUI(false);
+    }
     static addContentionList() {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
@@ -99,20 +175,6 @@ class Controller {
             Model.addContention(line, Controller.selectedContentionId);
         });
 
-        textArea.value = "";
-        textArea.focus();
-        Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
-    }
-
-
-    static addContention() {
-        if (!Controller.selectedContentionId) {
-            Controller.selectedContentionId = Controller.topicId;
-        }
-
-        var textArea: any = document.getElementById("argumentTextArea");
-        Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();
@@ -133,18 +195,45 @@ class Controller {
         UIDrawer.drawUI(false);
 
     }
-    static selectContention(e)
-    {
-        this.selectContentionById(e.getAttribute("id"));
-    }
 
-    static selectContentionById(contentionId)
-    {
-        UIDrawer.deselectElement(document.getElementById(this.selectedContentionId));
-        UIDrawer.selectElement(document.getElementById(contentionId));
-        this.selectedContentionId = contentionId;
-    }
 
+    // change
+    static changeContention() {
+        var selectedcontention: Contention = Controller.selectedcontention();
+        var textArea: any = document.getElementById("argumentTextArea");
+        var text: string = textArea.value.trim();
+
+        if (text.length == 0) {
+            return;
+        }
+        selectedcontention.updateText(text);
+        textArea.value = "";
+        Controller.saveUpdatedData();
+        UIDrawer.drawUI(false);
+    }
+    static copyContentionText() {
+        var selectedcontention: Contention = Controller.selectedcontention();
+        var textArea: any = document.getElementById("argumentTextArea");
+        textArea.value = selectedcontention.text;
+    }
+    static changeContentionColor(color: string) {
+        var selectedcontention: Contention = Controller.selectedcontention();
+        selectedcontention.color = color;
+        Controller.saveUpdatedData();
+        UIDrawer.drawUI(false);
+    }
+    static deleteContention() {
+        //console.log("removeContention " + Controller.selectedContentionId);
+        Model.removeContention(Controller.selectedContentionId)
+        Controller.saveUpdatedData();
+        UIDrawer.drawUI(false);
+    }
+    static collapceContention(contentionId: string) {
+        var cn: Contention = Model.contentionsMap.get(contentionId);
+        cn.collapce = !cn.collapce;
+        Controller.saveUpdatedData();
+        UIDrawer.drawUI(false);
+    }
     static collapceSelectedContention() {
         var cn: Contention = Controller.selectedcontention();
         cn.collapce = !cn.collapce;
@@ -163,13 +252,21 @@ class Controller {
         UIDrawer.drawUI(false);
     }
 
-    static collapceContention(contentionId: string) {
-        var cn: Contention = Model.contentionsMap.get(contentionId);
-        cn.collapce = !cn.collapce;
+    // topic
+    static createTopicFromContention() {
+        var selectedcontention: Contention = Controller.selectedcontention();
+
+        selectedcontention.collapce = true;
+        selectedcontention.topic = !selectedcontention.topic;
+        Model.childTopicsMap.set(selectedcontention.id, []);
+        Model.updateTopics();
+
         Controller.saveUpdatedData();
+        if (selectedcontention.topic) {
+            //Controller.topicId = selectedcontention.id;
+        }
         UIDrawer.drawUI(false);
     }
-
     static moveToTopic(topicId: string) {
         Controller.topicId = topicId;
         UIDrawer.drawUI(false);
@@ -178,9 +275,23 @@ class Controller {
         Controller.topicId = "root";
         UIDrawer.drawUI(true);
     }
+
+
+    static getTextAreaValue(id: string): string {
+        var textArea: any = document.getElementById(id);
+        return textArea.value;
+    }
+    static setTextAreaValue(key: string, value: string) {
+        var textArea: any = document.getElementById(key);
+        textArea.value = value;
+    }
     static getEncriptionKey(): string {
         return this.getTextAreaValue("encriptionKeyTextArea").trim();
     }
+    static contentionIsVisible(contentionId: string): boolean {
+        return document.getElementById(contentionId) != undefined;
+    }
+
 
     static saveUpdatedData()
     {
@@ -202,8 +313,6 @@ class Controller {
             // sand request on server
         }
     }
-    
-
     static reload() {
         const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
 
@@ -239,124 +348,105 @@ class Controller {
         }
     }
 
-    static contentionIsVisible(contentionId: string): boolean {
-        return document.getElementById(contentionId) != undefined;
+
+    static import()
+    {
+        var element = document.createElement('div');
+        element.innerHTML = '<input type="file">';
+        var fileInput: any = element.firstChild;
+
+        fileInput.addEventListener('change', function () {
+            var file = fileInput.files[0];
+
+            if (file.name.match(/\.(txt|json)$/)) {
+                var reader = new FileReader();
+
+                reader.onload = function () {
+                    console.log(reader.result);
+                    Controller.importJson(reader.result.toString());
+                    //Controller.saveUpdatedData();
+                    UIDrawer.drawUI(false);
+                };
+
+                reader.readAsText(file);
+            } else {
+                alert("File not supported, .txt or .json files only");
+            }
+        });
+        fileInput.click();
+        //document.body.removeChild(element);
     }
-    static moveContentionSelection(keyCode: number) {
-        var leftKeyCode = 37;
-        var upKeyCode = 38;
-        var rightKeyCode = 39;
-        var downKeyCode = 40;
-        //switch
-        if (keyCode == leftKeyCode) {
-            var contentionIdToSelect = this.selectedcontention().parentContentionId;
-            if (contentionIdToSelect && this.contentionIsVisible(contentionIdToSelect))
-            {
-                this.selectContentionById(contentionIdToSelect);
+
+    static importJson(json: string) {
+        console.log("importJson " + json);
+        var idChangeMap: Map<string, string> = new Map();
+
+        var objectsList = <Contention[]>JSON.parse(json);
+       
+        // fill contentionsMap and contentionsList with real objects
+        for (var i = 0; i < objectsList.length; i++) {
+            var obj = objectsList[i];
+
+            var id = obj.id.toString();
+            if (Model.contentionsMap.has(id)) {
+                var oldId = id;
+                id = Model.generateRandomId();
+                idChangeMap.set(oldId, id);
+                //console.log(" change id to " + cn.id);
             }
-        }
-        if (keyCode == rightKeyCode) {
-            var contentionIdToSelect = this.selectedcontention().childs[0];
-            if (contentionIdToSelect && this.contentionIsVisible(contentionIdToSelect)) {
-                this.selectContentionById(contentionIdToSelect);
-            }
-        }
-        if (keyCode == upKeyCode) {
-            var previosContention = this.selectedcontention().previosOrDefault();
-            if (previosContention) {
-                this.selectContentionById(previosContention.id);
+
+            var cn = new Contention(id, obj.topic);
+            //console.log("add object " + cn.id + " text " + obj.text +" parent id "+ cn.parentContentionId);
+
+            cn.parentContentionId = obj.parentContentionId.toString();
+
+            if (i==0) {
+                cn.parentContentionId = Controller.selectedContentionId;
             }
             else {
-                var offset = 0;
-                var contention = this.selectedcontention();
-                while (contention && !previosContention) {
-                    contention = contention.parentContention();
-                    previosContention = contention.previosOrDefault();
-                    offset++;
-                }
-                contention = previosContention;
-                while (contention.childs.length > 0 && offset > 0 && this.contentionIsVisible(contention.childs[contention.childs.length - 1]))
-                {
-                    contention = Model.contentionForId(contention.childs[contention.childs.length - 1]);
-                    offset--;
-                }
-                if (contention) {
-                    this.selectContentionById(contention.id);
+                if (idChangeMap.has(cn.parentContentionId)) {
+                    
+                    cn.parentContentionId = idChangeMap.get(cn.parentContentionId);
+                    //console.log(" change parent id to " + cn.parentContentionId);
                 }
             }
-        }
-        if (keyCode == downKeyCode) {
+            if (cn.parentContention()) { // wtf
+                cn.parentContention().childs().push(cn.id);
+            }
+
+            cn.text = obj.text;
             
-            var nextContention = this.selectedcontention().nextOrDefault();
-            if (nextContention) {
-                this.selectContentionById(nextContention.id);
+            cn.color = obj.color;
+            cn.collapce = obj.collapce ? true: false;
+            cn.topic = obj.topic ? true : false;
+            if (cn.topic) {
+                cn.parentTopic().childTopics().push(cn.id);
             }
-            else {
-                var offset = 0;
-                var contention = this.selectedcontention();
-                while (contention && !nextContention) {
-                    contention = contention.parentContention();
-                    nextContention = contention.nextOrDefault();
-                    offset++;
-                }
-                contention = nextContention;
-                while (contention.childs.length > 0 && offset > 0 && this.contentionIsVisible(contention.childs[0])) {
-                    contention = Model.contentionForId(contention.childs[0]);
-                    offset--;
-                }
-                if (contention) {
-                    this.selectContentionById(contention.id);
-                }
-            }
+            
+            Model.contentionsMap.set(cn.id, cn);
         }
     }
 
-    static moveContentionUp(up: boolean) {
-        this.shouldSaveContentionOrder = true;
-        var parentContention = this.selectedcontention().parentContention();
-        var index = parentContention.childs.indexOf(this.selectedContentionId);
-        if (up) {
-            if (index > 0) {
-                // UIDrawer.switchElements
-                var secondElementId = parentContention.childs[index - 1];
-                UIDrawer.switchElements(document.getElementById(this.selectedContentionId), document.getElementById(secondElementId));
-
-                parentContention.childs[index] = secondElementId;
-                parentContention.childs[index - 1] = this.selectedContentionId;
-            }
-        }
-        else {
-            if (index < parentContention.childs.length - 1) {
-                var secondElementId = parentContention.childs[index + 1];
-                UIDrawer.switchElements(document.getElementById(secondElementId), document.getElementById(this.selectedContentionId));
-                
-                parentContention.childs[index] = secondElementId;
-                parentContention.childs[index + 1] = this.selectedContentionId;
-            }
-        }
+    static export() {
+        var list: Contention[] = [];
+        this.selectedcontention().recursiveAddChilds(list);
+        var json = JSON.stringify(list);
+        download(this.selectedcontention().text + ".json", json);
     }
-
-    static saveContentionOrder() {
-        if (this.shouldSaveContentionOrder) {
-            this.shouldSaveContentionOrder = false;
-
-            Controller.saveUpdatedData();
-            UIDrawer.drawUI(false);
-        }
-    }
-
-    static getTextAreaValue(id: string): string {
-        var textArea: any = document.getElementById(id);
-        return textArea.value;
-    }
-    static setTextAreaValue(key: string, value: string) {
-        var textArea: any = document.getElementById(key);
-        textArea.value = value;
-    }
-
 }
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
 
-declare var TestInit;
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+declare var backendlessInit;
 
 window.onload = () => {
 
@@ -365,7 +455,7 @@ window.onload = () => {
     Controller.setTextAreaValue("encriptionKeyTextArea", localStorage.getItem("encriptionKey"));
 
     enableInput();
-    TestInit();
+    backendlessInit();
     Controller.reload();
 
     //TestUploadFile();

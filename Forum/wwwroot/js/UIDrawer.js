@@ -1,33 +1,39 @@
 class UIDrawer {
     static addCleanObjects(parentElement, contention, depth, x, y, drawAll) {
-        parentElement === null || parentElement === void 0 ? void 0 : parentElement.appendChild(UIDrawer.contentionHtml(contention, x, y));
+        //console.log("addCleanObjects");
+        //console.log(contention);
+        parentElement.appendChild(UIDrawer.contentionHtml(contention, x, y));
         x += UIDrawer.widthForDepth(depth);
         if (!contention.collapce || Controller.topicId == contention.id || drawAll) {
-            contention.childs.forEach(function (childContentionId) {
+            contention.childs().forEach(function (childContentionId) {
                 var childContention = Model.contentionForId(childContentionId);
                 UIDrawer.addCleanObjects(parentElement, childContention, depth + 1, x, y, drawAll);
-                y += childContention.height;
+                y += UIDrawer.heightMap.get(childContention.id);
             });
         }
     }
     static calculateSize(contention, depth, drawAll) {
-        contention.depth = depth;
+        this.depthMap.set(contention.id, depth);
+        // width
         var savedWidth = this.widthMap.get(depth.toString());
         if (!savedWidth || savedWidth < contention.width) {
             this.widthMap.set(depth.toString(), contention.width);
         }
+        // height
         // если нет листьев, если высота больше чем у листьев
+        var height = contention.height;
         var childsHeight = 0;
         if (!contention.collapce || Controller.topicId == contention.id || drawAll) {
-            contention.childs.forEach(function (childContentionId) {
+            contention.childs().forEach(function (childContentionId) {
                 var childContention = Model.contentionForId(childContentionId);
                 childsHeight += UIDrawer.calculateSize(childContention, depth + 1, drawAll);
             });
-            if (childsHeight > contention.height) {
-                contention.height = childsHeight;
+            if (childsHeight > height) {
+                height = childsHeight;
             }
         }
-        return contention.height;
+        this.heightMap.set(contention.id, height);
+        return height;
     }
     static widthForDepth(depth) {
         return this.widthMap.get(depth.toString()) + 4;
@@ -38,7 +44,7 @@ class UIDrawer {
         const element = document.createElement("div");
         element.innerHTML = UIDrawer.topicButtonHtml(topicContention, UIDrawer.topicIndex, depth);
         d1.appendChild(element);
-        topicContention.childTopics.forEach(function (childTopicId) {
+        topicContention.childTopics().forEach(function (childTopicId) {
             var childTopic = Model.contentionForId(childTopicId);
             UIDrawer.drawTopics(childTopic, depth + 1);
         });
@@ -51,10 +57,10 @@ class UIDrawer {
     static drawUI(drawAll) {
         var scrollX = window.scrollX;
         var scrollY = window.scrollY;
+        var rootKey = Controller.topicId;
         Controller.changeSelectedContention = false;
         var starX = UIDrawer.topicsWidth;
         var startY = 74;
-        //Model.updateChilds(false);
         var topicsDiv = document.getElementById("topics");
         topicsDiv.innerHTML = "";
         UIDrawer.topicIndex = 0;
@@ -62,29 +68,39 @@ class UIDrawer {
         // add raw elements for size calculation
         const contentionsDiv = document.getElementById("contentions");
         contentionsDiv.innerHTML = "";
-        Model.contentionsMap.forEach((contention, id) => {
-            contentionsDiv === null || contentionsDiv === void 0 ? void 0 : contentionsDiv.appendChild(UIDrawer.contentionHtmlRaw(contention));
-        });
+        var rawElementIdList = [];
+        this.recursiveAddRawToDom(Model.contentionForId(rootKey), contentionsDiv, rawElementIdList);
         // remove raw objects and save size
-        Model.contentionsMap.forEach((contention, id) => {
-            //console.log(contention);
-            var element = document.getElementById(contention.id);
-            contention.width = element.offsetWidth;
-            contention.height = element.offsetHeight;
-            //console.log("measured height for contention " + contention.text + " " + contention.height);
-            element.remove();
-            //element.parentElement.remove(); // deletes topics oO
+        rawElementIdList.forEach(function (contentionId) {
+            //console.log("calcuate size for " + contentionId);
+            var contention = Model.contentionForId(contentionId);
+            var element = document.getElementById(contentionId);
+            if (element) {
+                contention.width = element.offsetWidth;
+                contention.height = element.offsetHeight;
+            }
         });
-        // calculate height
-        var rootKey = Controller.topicId;
-        //console.log("calculateHeight");
         UIDrawer.widthMap = new Map();
+        UIDrawer.heightMap = new Map();
+        UIDrawer.depthMap = new Map();
         UIDrawer.calculateSize(Model.contentionsMap.get(rootKey), 0, drawAll);
         // add clean objects
         contentionsDiv.innerHTML = "";
         this.addCleanObjects(contentionsDiv, Model.contentionsMap.get(rootKey), 0, starX, startY, drawAll);
         UIDrawer.selectElement(document.getElementById(Controller.selectedContentionId));
         window.scrollBy(scrollX, scrollY);
+    }
+    static recursiveAddRawToDom(contention, contentionsDiv, rawElementIdList) {
+        if (!contention.width || contention.width == 0) {
+            rawElementIdList.push(contention.id);
+            console.log("rawElementIdList " + contention.id);
+            var element = UIDrawer.contentionHtmlRaw(contention);
+            contentionsDiv.appendChild(element);
+        }
+        contention.childs().forEach(function (childContentionId) {
+            var childContention = Model.contentionForId(childContentionId);
+            UIDrawer.recursiveAddRawToDom(childContention, contentionsDiv, rawElementIdList);
+        });
     }
     static selectElement(element) {
         if (element) {
@@ -118,9 +134,11 @@ class UIDrawer {
         if (contention.collapce) {
             color = "#9b9bff";
         }
-        var positionString = "position: absolute; top: " + y + "px; left: " + x + "px; width: " + (UIDrawer.widthForDepth(contention.depth) + 1) + "px; height: " + (contention.height + 1) + "px; min-width: 100px; max-width: 321px; ";
+        var depth = UIDrawer.depthMap.get(contention.id);
+        var height = UIDrawer.heightMap.get(contention.id);
+        var positionString = "position: absolute; top: " + y + "px; left: " + x + "px; width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px; min-width: 100px; max-width: 321px; ";
         //console.log("final heoght for contention " + contention.text + " " + contention.height);
-        var sizeString = "width: " + (UIDrawer.widthForDepth(contention.depth) + 1) + "px; height: " + (contention.height + 1) + "px; min-width: 100px; max-width: 325px; ";
+        var sizeString = "width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px; min-width: 100px; max-width: 325px; ";
         //var textString = "<div selectable=true childDiv=true id=" + contention.id + " class=\"verticalCenter\">" + contention.text + "</div>";
         var textString = "<div class='verticalCenter' selectable='true' container='true' >" + contention.text + "</div>";
         element.innerHTML = "<div selectable=true id=" + contention.id + " style=\"" + positionString + sizeString + " background:" + color + "; border: 1px solid #000000; display: inline-block;\" >" + textString + "</div>";

@@ -1,23 +1,20 @@
 ﻿
-declare var TestUploadFile;
+declare var backendlessUploadFile;
 
-class Network
-{
+class Network {
 
-    static async saveJson(url: string, json: string, loginHash:string, password: string)
-    {
-        CryptoWarper.encrypt(password, json).then(function (encriptionData: EncriptionData)
-        {
+    static async saveJson(url: string, json: string, loginHash: string, password: string) {
+        CryptoWarper.encrypt(password, json).then(function (encriptionData: EncriptionData) {
             var data: SerializedData = new SerializedData();
             data.encriptedData = encriptionData;
             data.version = Controller.currentVersion;
-            console.log(data);
+            //console.log(data);
             //console.log("json data " + JSON.stringify(data));
             //data.json = json;
             if (true) {
-                console.log("loginHash " + loginHash);
-                console.log(JSON.stringify(data));
-                TestUploadFile(loginHash, JSON.stringify(data));
+                //console.log("loginHash " + loginHash);
+                //console.log(JSON.stringify(data));
+                backendlessUploadFile(loginHash + ".json", JSON.stringify(data));
             }
             else {
                 fetch(url, {
@@ -35,7 +32,7 @@ class Network
                     }
                 });
             }
-            
+
 
             //return body.text();
             //CryptoWarper.decrypt("pass123", data).then(function (json: string) {
@@ -48,8 +45,7 @@ class Network
         const response = await fetch(url)
             .then(function (body) { return body.text(); })
             .then(function (data) { Model.decriptJson(data, Controller.getEncriptionKey()); })
-            .catch(function (body)
-            {
+            .catch(function (body) {
                 console.log("loadJson error");
                 Model.parseJson("");
             }

@@ -1,68 +1,76 @@
 ﻿class Model {
-    //static contentionsList: Contention[] = [];
     static contentionsMap: Map<string, Contention> = new Map();
 
+    static childContentionMap: Map<string, string[]> = new Map();
+    static childTopicsMap: Map<string, string[]> = new Map();
 
     static decriptJson(jsonText: string, password: string) {
-        //console.log("got from server " + jsonText);
-        //try {
-            var data: SerializedData = <SerializedData>JSON.parse(jsonText);
-            //console.log(data.version);
-            //console.log(data.json);
-            Controller.currentVersion = data.version;
-            if (data.json) {
-                //console.log("old data format");
-                Model.parseJson(data.json);
+        var data: SerializedData = <SerializedData>JSON.parse(jsonText);
+        //console.log(data.version);
+        //console.log(data.json);
+        Controller.currentVersion = data.version;
+        if (data.json) {
+            //console.log("old data format");
+            Model.parseJson(data.json);
+        }
+        else {
+            //console.log("encripted data format");
+            if (password.length > 0) {
+                CryptoWarper.decrypt(password, data.encriptedData).then(function (json: string) {
+                    //console.log("decripted json ");
+                    Model.parseJson(json);
+                }).catch(function (error) {
+                    console.log(error);
+                });
             }
             else {
-                //console.log("encripted data format");
-                if (password.length > 0) {
-                    CryptoWarper.decrypt(password, data.encriptedData).then(function (json: string) {
-                        //console.log("decripted json ");
-                        Model.parseJson(json);
-                    }).catch(function (json: string) {
-                        console.log("decription error ");
-                    });
-                }
-                else {
-                    //console.log("decription error ");
-                    //console.log("new format, data not encripted");
-                    Model.parseJson(data.encriptedData.encriptedString);
-                }
+                //console.log("decription error ");
+                //console.log("new format, data not encripted");
+                Model.parseJson(data.encriptedData.encriptedString);
             }
-        //}
-        //catch (e) {
-        //    console.log(e);
-        //    console.log("decriptJson error");
-        //    Model.parseJson("[]");
-        //}
-        //if (Model.contentionsMap.keys.length == 0) {
-        //    console.log("parse default Json " + jsonText);
-        //    Model.parseJson("[]");
-        //}
-        //console.log("decriptJson done");
+        }
     }
+
     static parseJson(jsonText: string) {
-        
+        //console.log("parseJson " + jsonText);
         Model.contentionsMap = new Map();
+        Model.childContentionMap = new Map();
+        Model.childTopicsMap = new Map();
+
         try {
             var objectsList = [];
             objectsList = <Contention[]>JSON.parse(jsonText);
-            if (objectsList.length == 0 && jsonText.length > 10) {
-                console.log("decription error ");
-            }
+
             // fill contentionsMap and contentionsList with real objects
             objectsList.forEach(function (obj) {
-                var cn = new Contention();
-                cn.id = obj.id.toString();
+                var cn = new Contention(obj.id, obj.topic);
                 cn.text = obj.text;
                 cn.parentContentionId = obj.parentContentionId;
-                cn.childs = obj.childs;
+                //cn.childs = obj.childs;
                 cn.color = obj.color;
                 cn.collapce = obj.collapce;
                 cn.topic = obj.topic;
-                cn.childTopics = obj.childTopics;
+                cn.width = obj.width;
+                cn.height = obj.height;
+                if (cn.topic) {
+                    Model.childTopicsMap.set(cn.id, []);
+                }
+                //cn.childTopics = obj.childTopics;
                 Model.contentionsMap.set(cn.id, cn);
+
+                var parentContentionChildsList = Model.childContentionMap.get(cn.parentContentionId);
+                if (parentContentionChildsList) {
+                    parentContentionChildsList.push(cn.id);
+                }
+                //console.log(cn);
+                //if (cn.topic) {
+                //    var parentTopic = cn.parentTopic();
+                //    if (parentTopic) {
+                //        console.log("push childTopics for " + parentTopic.id + "   "  + cn.id);
+                //        parentTopic.childTopics().push(cn.id);
+                //    }
+                //}
+
             });
         }
         catch (e) {
@@ -71,36 +79,46 @@
         // add root element if there is no one
         if (!Model.contentionsMap.has("root")) {
             console.log("create root topic");
-            var cn = new Contention();
-            cn.id = "root";
+            var cn = new Contention("root", true);
             cn.text = "root";
             cn.parentContentionId = "-1";
-            cn.width = 320;
+            //cn.width = 320;
             cn.topic = true;
             Model.contentionsMap.set(cn.id, cn);
         }
 
         Model.contentionsMap.get("root").topic = true;
-        Model.updateTopicsFor(Model.contentionsMap.get("root"));
+        Model.updateTopics();
 
         Controller.topicId = "root";
         UIDrawer.drawUI(false);
     }
 
-    static updateTopicsFor(topic: Contention) {
-        topic.childTopics = [];
-        topic.childs.forEach(function (childContentionId) {
-            var childContention = Model.contentionForId(childContentionId);
-            Model.recursiveUpdateParentTopic(childContention, topic);
+    static updateTopics() {
+
+        Model.childTopicsMap.forEach((subtopics: string[], id: string) => {
+            //console.log(id);
+            Model.childTopicsMap.set(id, []);
+        });
+        Model.childTopicsMap.forEach((subtopics: string[], id: string) => {
+            //console.log(key, value);
+            var topicContention = Model.contentionForId(id);
+            if (topicContention && topicContention.topic) {
+                var parentTopic = topicContention.parentTopic();
+                //console.log(topicContention);
+                if (parentTopic) {
+                    parentTopic.childTopics().push(id);
+                }
+            }
         });
     }
 
     static recursiveUpdateParentTopic(contention: Contention, parentTopic: Contention) {
         if (contention.topic) {
-            parentTopic.childTopics.push(contention.id);
+            parentTopic.childTopics().push(contention.id);
         }
         else {
-            contention.childs.forEach(function (childContentionId) {
+            contention.childs().forEach(function (childContentionId) {
                 var childContention = Model.contentionForId(childContentionId);
                 Model.recursiveUpdateParentTopic(childContention, parentTopic);
             });
@@ -112,13 +130,13 @@
         var parentTopic = cn.parentTopic();
         var parentContention = cn.parentContention();
 
-        var index: number = parentContention.childs.indexOf(id)
+        var index: number = parentContention.childs().indexOf(id)
         if (index > -1) {
-            parentContention.childs.splice(index, 1);
+            parentContention.childs().splice(index, 1);
         }
         cn.parentContentionId = "-1";
         Model.contentionsMap.delete(id);
-        Model.updateTopicsFor(parentTopic);
+        Model.updateTopics();
     }
 
 
@@ -126,24 +144,25 @@
         var cn = Model.contentionForId(id);
         var parentTopic = cn.parentTopic();
         Model.removeContention(id);
-        Model.updateTopicsFor(parentTopic);
+        Model.updateTopics();
 
-        Model.contentionForId(parentId).childs.push(cn.id);
+        Model.contentionForId(parentId).childs().push(cn.id);
         Model.contentionsMap.set(cn.id, cn);
         cn.parentContentionId = parentId;
-        Model.updateTopicsFor(cn.parentTopic());
+        Model.updateTopics();
     }
     static addContentionWithId(text: string, parentId: string, id: string) {
         text = text.trim();
         if (text.length > 0) {
-            var cn = new Contention();
-            cn.id = id;
+            //console.log("addContentionWithId " + id);
+            var cn = new Contention(id, false);
             cn.text = text;
             cn.parentContentionId = parentId;
-            cn.width = 320;
+            //cn.width = 320;
 
-            Model.contentionForId(parentId).childs.push(cn.id);
             Model.contentionsMap.set(cn.id, cn);
+            Model.contentionForId(parentId).childs().push(cn.id);
+
         }
     }
 
@@ -182,34 +201,38 @@
         Model.moveContentionToTop(archiveContention);
         return archiveContention;
     }
+
     static moveContentionToTop(cn: Contention) {
         var parentContention = cn.parentContention();
 
-        var index: number = parentContention.childs.indexOf(cn.id);
+        var index: number = parentContention.childs().indexOf(cn.id);
         if (index > -1) {
-            parentContention.childs.splice(index, 1);
+            parentContention.childs().splice(index, 1);
         }
-        cn.parentContention().childs.unshift(cn.id);
+        cn.parentContention().childs().unshift(cn.id);
     }
-
-    
 }
 
 class Contention {
     id: string;
     text: string;
     parentContentionId: string;
-    childs: string[] = [];
-    childTopics: string[] = [];
+    //childs: string[] = [];
+    //childTopics: string[] = [];
 
-    width: number = 0;
-    height: number = 0;
-    depth: number = 0;
+    width: number; // this property determines if contention size is counted
+    height: number;
+
     color: string = "#FFF";
     collapce: boolean = false;
     topic: boolean = false;
-    constructor() {
-        this.childs = [];
+
+    constructor(id: string, topic: boolean) {
+        this.id = id;
+        Model.childContentionMap.set(this.id, []);
+        if (topic) {
+            Model.childTopicsMap.set(this.id, []);
+        }
     }
     parentContention(): Contention {
         return Model.contentionsMap.get(this.parentContentionId)
@@ -225,32 +248,52 @@ class Contention {
 
     recursiveAddChilds(list: Contention[]) {
         list.push(this);
-        this.childs.forEach(function (childContentionId) {
+        this.childs().forEach(function (childContentionId) {
             var childContention = Model.contentionForId(childContentionId);
             childContention.recursiveAddChilds(list);
         });
     }
+    updateText(text: string) {
+        this.text = text;
+        this.width = undefined;
+    }
+    childs() {
+        return Model.childContentionMap.get(this.id);
+    }
+    childTopics() {
+        return Model.childTopicsMap.get(this.id);
+    }
 
     indexInParentContention(): number {
-        if (!this.parentContentionId) {
+
+        var parentContention = this.parentContention();
+        console.log("indexInParentContention");
+        console.log("contention");
+        console.log(this);
+        console.log("parent");
+        console.log(parentContention);
+        console.log("search for " + this.id);
+        console.log("childs " + parentContention.childs());
+
+        if (!parentContention) {
             return -1;
         }
-        return this.parentContention().childs.indexOf(this.id);
+
+        return parentContention.childs().indexOf(this.id);
     }
     nextOrDefault(): Contention {
         var parentContention = this.parentContention();
         var index = this.indexInParentContention() + 1;
-        if (index < parentContention.childs.length) {
-            return Model.contentionForId(parentContention.childs[index])
+        if (index < parentContention.childs().length) {
+            return Model.contentionForId(parentContention.childs()[index]);
         }
         return;
     }
-    previosOrDefault(): Contention
-    {
+    previosOrDefault(): Contention {
         var parentContention = this.parentContention();
         var index = this.indexInParentContention() - 1;
-        if (index >= 0 ) {
-            return Model.contentionForId(parentContention.childs[index])
+        if (index >= 0) {
+            return Model.contentionForId(parentContention.childs()[index]);
         }
         return;
     }

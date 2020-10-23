@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\Test.js" />
+    <None Include="wwwroot\js\JSWrapper.js" />
   </ItemGroup>
 
   <ItemGroup>
