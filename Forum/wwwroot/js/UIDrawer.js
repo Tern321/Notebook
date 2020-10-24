@@ -21,7 +21,7 @@ class UIDrawer {
         }
         // height
         // если нет листьев, если высота больше чем у листьев
-        var height = contention.height;
+        var height = contention.height - 3;
         var childsHeight = 0;
         if (!contention.collapce || Controller.topicId == contention.id || drawAll) {
             contention.childs().forEach(function (childContentionId) {
@@ -36,7 +36,7 @@ class UIDrawer {
         return height;
     }
     static widthForDepth(depth) {
-        return this.widthMap.get(depth.toString()) + 4;
+        return this.widthMap.get(depth.toString());
     }
     static drawTopics(topicContention, depth) {
         UIDrawer.topicIndex++;
@@ -52,7 +52,13 @@ class UIDrawer {
     static topicButtonHtml(contention, index, depth) {
         var offset = depth * 10;
         var width = UIDrawer.topicsWidth - offset;
-        return "<button style=\"text-align: left; position: fixed; left: " + offset + "px; top: " + index * 20 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic('" + contention.id + "')\" >" + contention.text + "</button>";
+        //style =\"" + positionString + sizeString + " background:" + color +
+        if (contention.id == Controller.topicId) {
+            return "<button class='topicButton' style=\"background-color: #AAA; left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic('" + contention.id + "')\" >" + contention.text + "</button>";
+        }
+        else {
+            return "<button class='topicButton' style=\"left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic('" + contention.id + "')\" >" + contention.text + "</button>";
+        }
     }
     static drawUI(drawAll) {
         var scrollX = window.scrollX;
@@ -78,6 +84,7 @@ class UIDrawer {
             if (element) {
                 contention.width = element.offsetWidth;
                 contention.height = element.offsetHeight;
+                console.log("calculate size for element " + contention.id + " width " + contention.width + " height " + contention.height);
             }
         });
         UIDrawer.widthMap = new Map();
@@ -93,7 +100,6 @@ class UIDrawer {
     static recursiveAddRawToDom(contention, contentionsDiv, rawElementIdList) {
         if (!contention.width || contention.width == 0) {
             rawElementIdList.push(contention.id);
-            console.log("rawElementIdList " + contention.id);
             var element = UIDrawer.contentionHtmlRaw(contention);
             contentionsDiv.appendChild(element);
         }
@@ -121,8 +127,8 @@ class UIDrawer {
     }
     static contentionHtmlRaw(contention) {
         const element = document.createElement("div");
-        var textString = "<div class='verticalCenter' id=" + contention.id + "  style=\"border: 3px solid #000000;min-width: 100px; max-width: 320px; display: inline-block\" >" + contention.text + "</div>";
-        element.innerHTML = "<div class='verticalContainer'>" + textString + "</div>";
+        var textString = "<div class='verticalCenter rawContentionElement'  >" + contention.text + "</div>";
+        element.innerHTML = "<div class='contentionElement rawContentionElement'  id=" + contention.id + ">" + textString + "</div>";
         return element;
     }
     static contentionHtml(contention, x, y) {
@@ -136,12 +142,10 @@ class UIDrawer {
         }
         var depth = UIDrawer.depthMap.get(contention.id);
         var height = UIDrawer.heightMap.get(contention.id);
-        var positionString = "position: absolute; top: " + y + "px; left: " + x + "px; width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px; min-width: 100px; max-width: 321px; ";
-        //console.log("final heoght for contention " + contention.text + " " + contention.height);
-        var sizeString = "width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px; min-width: 100px; max-width: 325px; ";
-        //var textString = "<div selectable=true childDiv=true id=" + contention.id + " class=\"verticalCenter\">" + contention.text + "</div>";
+        var positionString = " top:" + y + "px; left:" + x + "px;";
+        var sizeString = "width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px;";
         var textString = "<div class='verticalCenter' selectable='true' container='true' >" + contention.text + "</div>";
-        element.innerHTML = "<div selectable=true id=" + contention.id + " style=\"" + positionString + sizeString + " background:" + color + "; border: 1px solid #000000; display: inline-block;\" >" + textString + "</div>";
+        element.innerHTML = "<div class='contentionElement' selectable=true id=" + contention.id + " style=\"" + positionString + sizeString + " background:" + color + "; \" >" + textString + "</div>";
         return element;
     }
     static switchElements(elementA, elementB) {

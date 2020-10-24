@@ -21,15 +21,7 @@
     border: 1px solid black;
 }
 
-.verticalCenter {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    line-height: 80%;
-    padding-bottom: 3px;
-}
+
 
 .uiButtons {
     vertical-align: middle;
@@ -43,4 +35,41 @@
     margin: 0px;
 }
 
+.topicButton {
+    background-color: #EEE;
+    color: black;
+    border: 1px solid #555555;
+    text-align: left;
+    position: fixed;
+}
+
+.verticalCenter {
+    border: 0px;
+    padding: 0px;
+    margin-top: 0px;
+
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    line-height: 0.8em;
+    /*border: 1px;*/
+    solid #000000;
+    display: inline-block;
+}
+
+.contentionElement {
+    padding: 0px;
+    margin: 0px;
+
+    position: absolute;
+    border: 1px solid #000000;
+    display: inline-block;
+}
+
+.rawContentionElement {
+    min-width: 100px;
+    max-width: 320px;
+    position: relative;
+}
 /*font-family: monospace;*/
