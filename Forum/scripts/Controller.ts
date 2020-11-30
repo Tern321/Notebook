@@ -11,8 +11,8 @@ class Controller {
         this.selectContentionById(e.getAttribute("id"));
     }
     static selectContentionById(contentionId) {
-        console.log(Model.contentionForId(contentionId));
-        console.log(Model.contentionForId(contentionId).childs());
+        //console.log(Model.contentionForId(contentionId));
+        //console.log(Model.contentionForId(contentionId).childs());
         UIDrawer.deselectElement(document.getElementById(this.selectedContentionId));
         UIDrawer.selectElement(document.getElementById(contentionId));
         this.selectedContentionId = contentionId;
@@ -29,12 +29,12 @@ class Controller {
             //console.log("moveContentionToTop");
             Model.moveContentionToTop(Model.contentionForId(targetContentionId));
 
-            console.log("moveContention");
+            //console.log("moveContention");
             var archiveContentionId = Model.archiveIdForContention(Controller.selectedContentionId);
 
             if (Model.contentionsMap.has(archiveContentionId)) {
                 Model.moveContentionToTop(Model.contentionForId(archiveContentionId));
-                console.log("parent contains archive");
+                //console.log("parent contains archive");
             }
 
         }
@@ -42,7 +42,7 @@ class Controller {
             // проверка что мы не перемещаем потомка в предка
             while (testParents && testParents.parentContentionId != "-1") {
                 if (testParents.id == targetContentionId) {
-                    console.log("error contention move");
+                    //console.log("error contention move");
                     return;
                 }
                 testParents = testParents.parentContention();
@@ -164,6 +164,29 @@ class Controller {
         Controller.saveUpdatedData();
         UIDrawer.drawUI(false);
     }
+
+    static copyContentionCtrlC() {
+        var textArea: any = document.getElementById("argumentTextArea");
+        textArea.focus();
+        textArea.value = Controller.selectedcontention().text;
+        textArea.select();
+        setTimeout(function () { Controller.removeTextAreaFocus(); }, 100);
+    }
+
+    static deleteContentionCtrlX() {
+
+    }
+    static removeTextAreaFocus() {
+        var textArea: any = document.getElementById("argumentTextArea");
+        textArea.blur();
+    }
+    static addContentionCtrlV() {
+        var textArea: any = document.getElementById("argumentTextArea");
+        textArea.focus();
+        textArea.select();
+        setTimeout(function () { Controller.addContention(); Controller.removeTextAreaFocus(); }, 100);
+    }
+
     static addContentionList() {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
@@ -195,8 +218,54 @@ class Controller {
         UIDrawer.drawUI(false);
 
     }
+    static addFile(ev) {
+        if (!Controller.selectedContentionId) {
+            Controller.selectedContentionId = Controller.topicId;
+        }
+        var link = "";
+        //Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
 
 
+        console.log('File(s) dropped');
+
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                // If dropped items aren't files, reject them
+                if (ev.dataTransfer.items[i].kind === 'file') {
+                    var file = ev.dataTransfer.items[i].getAsFile();
+                    console.log('... file[' + i + '].name = ' + file.name);
+
+
+                }
+            }
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+            }
+        }
+
+    }
+    static readFile(file) {
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+
+        //var reader = new FileReader();
+        //reader.onload = function (e) {
+        //    var contents = e.target.result;
+        //    fileInput.func(contents)
+        //    document.body.removeChild(fileInput)
+        //}
+        //reader.readAsText(file)
+    }
+    static dragover_handler(ev) {
+        console.log(ev);
+        ev.preventDefault();
+    }
     // change
     static changeContention() {
         var selectedcontention: Contention = Controller.selectedcontention();
@@ -269,6 +338,7 @@ class Controller {
     }
     static moveToTopic(topicId: string) {
         Controller.topicId = topicId;
+        localStorage.setItem("topic", Controller.topicId);
         UIDrawer.drawUI(false);
     }
     static viewAll() {
@@ -292,7 +362,8 @@ class Controller {
         return document.getElementById(contentionId) != undefined;
     }
 
-
+    static uploadDataurl: string = "http://localhost:51302/Home/saveUdatedData";
+    static loadJsonUrl: string = "http://localhost:51302/Home/json";
     static saveUpdatedData()
     {
         const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
@@ -307,9 +378,9 @@ class Controller {
 
             var json = JSON.stringify(list);
             //console.log(json);
-            var url = "";
-            //var url = "https://localhost:44380/Home/saveUdatedData" 
-            Network.saveJson(url, json, hash.toString(), this.getEncriptionKey());
+            //var url = "";
+            
+            Network.saveJson(this.uploadDataurl, json, hash.toString(), this.getEncriptionKey());
             // sand request on server
         }
     }
@@ -328,9 +399,10 @@ class Controller {
             localStorage.setItem("login", login);
             localStorage.setItem("encriptionKey", encriptionKey);
 
-            //var url = "https://localhost:44380/Home/json"
-            var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/" + hash + ".json";
-            Network.loadJson(url);
+            //var url = "https://www.sbitravel.com/rest/messages/read_message?login=bmsaowvasgpubyclhhdggydepxm&password=mmvvfcvbjyrtyptyutryuqslxtfnyocchhfdllkhml&appKey=forum&messageKey=data.json"
+            
+            //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/" + hash + ".json";
+            Network.loadJson(this.loadJsonUrl);
         }
         else {
             console.log("load default data");
@@ -431,9 +503,10 @@ class Controller {
         var list: Contention[] = [];
         this.selectedcontention().recursiveAddChilds(list);
         var json = JSON.stringify(list);
-        download(this.selectedcontention().text + ".json", json);
+        download(this.selectedcontention().text + Date.now() + ".json", json);
     }
 }
+
 function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
@@ -446,19 +519,23 @@ function download(filename, text) {
 
     document.body.removeChild(element);
 }
+
 declare var backendlessInit;
 
 window.onload = () => {
 
-    //console.log("on load " + localStorage.getItem("login"));
+    console.log("on load " + localStorage.getItem("login"));
+    Controller.topicId = localStorage.getItem("topic");
     Controller.setTextAreaValue("loginTextArea", localStorage.getItem("login"));
     Controller.setTextAreaValue("encriptionKeyTextArea", localStorage.getItem("encriptionKey"));
-
     enableInput();
-    backendlessInit();
+    //backendlessInit();
     Controller.reload();
 
-    //TestUploadFile();
+
+    //CryptoWarper.encrypt("testPasd1", "jsonString1");
+    //CryptoWarper.encrypt("test123", "jsonString2");
+    //CryptoWarper.encrypt("t3", "jsonStringas 1238917230 9871290 371920837019283790182 73901273 908127390 8709238 712093 71 029837 912873 09");
 
     // https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/data.txt
 

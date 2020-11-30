@@ -50,8 +50,8 @@
                 cn.color = obj.color;
                 cn.collapce = obj.collapce;
                 cn.topic = obj.topic;
-                cn.width = obj.width;
-                cn.height = obj.height;
+                //cn.width = obj.width;
+                //cn.height = obj.height;
                 if (cn.topic) {
                     Model.childTopicsMap.set(cn.id, []);
                 }
@@ -62,14 +62,6 @@
                 if (parentContentionChildsList) {
                     parentContentionChildsList.push(cn.id);
                 }
-                //console.log(cn);
-                //if (cn.topic) {
-                //    var parentTopic = cn.parentTopic();
-                //    if (parentTopic) {
-                //        console.log("push childTopics for " + parentTopic.id + "   "  + cn.id);
-                //        parentTopic.childTopics().push(cn.id);
-                //    }
-                //}
 
             });
         }
@@ -89,8 +81,6 @@
 
         Model.contentionsMap.get("root").topic = true;
         Model.updateTopics();
-
-        Controller.topicId = "root";
         UIDrawer.drawUI(false);
     }
 

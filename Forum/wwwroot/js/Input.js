@@ -12,6 +12,23 @@ function enableInput() {
     document.getElementById("contentions").oncontextmenu = function (e) { return mouseClick(e); };
     document.getElementById("contentions").addEventListener("mousedown", mouseDownEvent);
     document.getElementById("contentions").onmousedown = function (e) { mouseClick(e); };
+    document.getElementById("argumentTextArea").addEventListener('focus', (event) => {
+        //console.log("argumentTextArea focus");
+        var colorTrue = Controller.changeSelectedContention ? "blue" : "red";
+        if (Controller.changeSelectedContention) {
+            UIDrawer.selectElementBase(document.getElementById("changeButton"), true, colorTrue, "black");
+        }
+        else {
+            UIDrawer.selectElementBase(document.getElementById("addButton"), true, colorTrue, "black");
+        }
+        UIDrawer.selectElementBase(document.getElementById("argumentTextArea"), true, colorTrue, "black");
+    });
+    document.getElementById("argumentTextArea").addEventListener('blur', (event) => {
+        //console.log("argumentTextArea lost focus");
+        UIDrawer.selectElementBase(document.getElementById("addButton"), false, "red", "black");
+        UIDrawer.selectElementBase(document.getElementById("changeButton"), false, "red", "black");
+        UIDrawer.selectElementBase(document.getElementById("argumentTextArea"), false, "red", "black");
+    });
 }
 function keyUp(event) {
     if (event.keyCode == 16) {
@@ -22,18 +39,25 @@ function keyUp(event) {
 }
 function checkKeycode(event) {
     //console.log("ctrlKey:" + event.ctrlKey + " shiftKey:" + event.shiftKey + " altKey:" + event.altKey + " keyCode:" + event.keyCode);
-    //if ((event.shiftKey) && (event.keyCode == 1071)) {
-    //    moveContention();
-    //}
-    if (event.shiftKey && ((event.keyCode == 0xA) || (event.keyCode == 0xD))) {
-        Controller.addContentionList();
-    }
-    if (event.ctrlKey && ((event.keyCode == 0xA) || (event.keyCode == 0xD))) {
-        if (Controller.changeSelectedContention) {
-            Controller.changeContention();
+    if ((event.keyCode == 0xA) || (event.keyCode == 0xD)) {
+        if (event.shiftKey) {
+            Controller.addContentionList();
+        }
+        else if (event.ctrlKey) {
+            if (Controller.changeSelectedContention) {
+                Controller.changeContention();
+            }
+            else {
+                Controller.addContention();
+            }
         }
         else {
-            Controller.addContention();
+            var textArea = document.getElementById("argumentTextArea");
+            if (textArea.matches(":focus")) {
+                return true;
+            }
+            textArea.focus();
+            return false;
         }
     }
     var leftKeyCode = 37;
@@ -50,11 +74,24 @@ function checkKeycode(event) {
         Controller.moveContentionUp(event.keyCode == upKeyCode);
         return false;
     }
-    //// handling Internet Explorer stupidity with window.event
-    //// @see http://stackoverflow.com/a/3985882/517705
-    //var keyDownEvent = event || window.event,
-    //    keycode = (keyDownEvent.which) ? keyDownEvent.which : keyDownEvent.keyCode;
-    //print_arrow_key(keycode);
+    var textArea = document.getElementById("argumentTextArea");
+    if (!textArea.matches(":focus") && event.ctrlKey) {
+        if (event.keyCode == 67) {
+            //console.log("ctrl c");
+            Controller.copyContentionCtrlC();
+            return true;
+        }
+        if (event.keyCode == 88) {
+            //console.log("ctrl x");
+            Controller.deleteContentionCtrlX();
+            return true;
+        }
+        if (event.keyCode == 86) {
+            //console.log("ctrl v");
+            Controller.addContentionCtrlV();
+            return true;
+        }
+    }
     return true;
 }
 var start;
@@ -115,6 +152,7 @@ function mouseClick(e) {
                 Controller.changeSelectedContention = true;
                 Controller.selectContention(contentionElement);
                 Controller.copyContentionText();
+                document.getElementById("argumentTextArea").focus();
                 // copy contention text to text field
             }
             break;

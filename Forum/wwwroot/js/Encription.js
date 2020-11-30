@@ -51,14 +51,18 @@ class CryptoWarper {
     static encrypt(password, json) {
         return __awaiter(this, void 0, void 0, function* () {
             var data = new EncriptionData();
+            console.log("encripting data");
             if (password.length > 0) {
-                //console.log("encripting data");
                 let salt = window.crypto.getRandomValues(new Uint8Array(16));
                 data.saltJson = JSON.stringify(Array.from(salt));
                 let iv = window.crypto.getRandomValues(new Uint8Array(12));
                 data.ivJsonString = JSON.stringify(Array.from(iv));
                 let keyMaterial = yield CryptoWarper.getKeyMaterial(password);
                 let key = yield CryptoWarper.getKey(keyMaterial, salt);
+                //const keyMaterialJson = crypto.subtle.exportKey("jwk", keyMaterial);
+                const keyJson = crypto.subtle.exportKey("jwk", key);
+                //console.log("keyMaterial ", keyMaterialJson)
+                console.log("key ", keyJson);
                 let enc = new TextEncoder();
                 let encoded = enc.encode(json);
                 var ciphertext = yield window.crypto.subtle.encrypt({
@@ -68,9 +72,14 @@ class CryptoWarper {
                 data.encriptedString = CryptoWarper.arrayBufferToBase64(ciphertext);
             }
             else {
-                //console.log("data not encripted");
+                console.log("data not encripted");
                 data.encriptedString = json;
             }
+            console.log("password ", password);
+            console.log("json ", json);
+            console.log("data.ivJsonString ", data.ivJsonString);
+            console.log("data.saltJson ", data.saltJson);
+            console.log("data.encriptedString", data.encriptedString);
             return data;
         });
     }

@@ -11,15 +11,15 @@ class Network {
             //console.log(data);
             //console.log("json data " + JSON.stringify(data));
             //data.json = json;
-            if (true) {
+            if (false) {
                 //console.log("loginHash " + loginHash);
                 //console.log(JSON.stringify(data));
-                backendlessUploadFile(loginHash + ".json", JSON.stringify(data));
+                //backendlessUploadFile(loginHash + ".json", JSON.stringify(data));
             }
             else {
                 fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }, // this line is important, if this content-type is not set it wont work
+                    headers: { 'Content-Type': 'text/plain' }, // this line is important, if this content-type is not set it wont work
                     body: JSON.stringify(data)
                 }).then(function (body) { return body.text(); }).then(function (data) {
 
