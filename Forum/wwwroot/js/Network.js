@@ -20,12 +20,11 @@ class Network {
                 if (false) {
                     //console.log("loginHash " + loginHash);
                     //console.log(JSON.stringify(data));
-                    //backendlessUploadFile(loginHash + ".json", JSON.stringify(data));
                 }
                 else {
                     fetch(url, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'text/plain' },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     }).then(function (body) { return body.text(); }).then(function (data) {
                         if (data == "ok") {
@@ -37,10 +36,6 @@ class Network {
                         }
                     });
                 }
-                //return body.text();
-                //CryptoWarper.decrypt("pass123", data).then(function (json: string) {
-                //    console.log(json);
-                //});
             });
         });
     }
@@ -54,26 +49,6 @@ class Network {
                 Model.parseJson("");
             });
         });
-    }
-    static initBackndless() {
-        var APP_ID = '4498E4FA-01A9-8E7F-FFC3-073969464300';
-        var API_KEY = 'EA20D9FD-18DC-476D-9169-57DD9EA626C7';
-        //Backendless.initApp(APP_ID, API_KEY);
-        //Backendless.Data.of("TestTable").save({ foo: "bar" })
-        //    .then(function (obj) {
-        //        console.log("object saved. objectId " + obj.objectId)
-        //    })
-        //    .catch(function (error) {
-        //        console.log("got error - " + error)
-        //    })
-        //Backendless.initApp(APP_ID, API_KEY);
-        //Backendless.Data.of("TestTable").save({ foo: "bar" })
-        //    .then(function (obj: any) {
-        //        console.log("object saved. objectId " + obj.objectId)
-        //    })
-        //    .catch(function (error) {
-        //        console.log("got error - " + error)
-        //    })
     }
 }
 //# sourceMappingURL=Network.js.map

@@ -11,8 +11,6 @@ class Controller {
         this.selectContentionById(e.getAttribute("id"));
     }
     static selectContentionById(contentionId) {
-        //console.log(Model.contentionForId(contentionId));
-        //console.log(Model.contentionForId(contentionId).childs());
         UIDrawer.deselectElement(document.getElementById(this.selectedContentionId));
         UIDrawer.selectElement(document.getElementById(contentionId));
         this.selectedContentionId = contentionId;
@@ -266,6 +264,7 @@ class Controller {
         console.log(ev);
         ev.preventDefault();
     }
+
     // change
     static changeContention() {
         var selectedcontention: Contention = Controller.selectedcontention();
@@ -362,8 +361,8 @@ class Controller {
         return document.getElementById(contentionId) != undefined;
     }
 
-    static uploadDataurl: string = "http://localhost:51302/Home/saveUdatedData";
-    static loadJsonUrl: string = "http://localhost:51302/Home/json";
+    static uploadDataurl: string = "/Home/saveUdatedData";
+    static loadJsonUrl: string = "/Home/json";
     static saveUpdatedData()
     {
         const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
@@ -379,8 +378,8 @@ class Controller {
             var json = JSON.stringify(list);
             //console.log(json);
             //var url = "";
-            
-            Network.saveJson(this.uploadDataurl, json, hash.toString(), this.getEncriptionKey());
+
+            Network.saveJson(Controller.uploadDataurl, json, hash.toString(), Controller.getEncriptionKey());
             // sand request on server
         }
     }
@@ -398,10 +397,6 @@ class Controller {
 
             localStorage.setItem("login", login);
             localStorage.setItem("encriptionKey", encriptionKey);
-
-            //var url = "https://www.sbitravel.com/rest/messages/read_message?login=bmsaowvasgpubyclhhdggydepxm&password=mmvvfcvbjyrtyptyutryuqslxtfnyocchhfdllkhml&appKey=forum&messageKey=data.json"
-            
-            //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/" + hash + ".json";
             Network.loadJson(this.loadJsonUrl);
         }
         else {
@@ -415,8 +410,8 @@ class Controller {
             //localStorage.setItem("encriptionKey", encriptionKey);
 
             //var url = "https://localhost:44380/Home/json"
-            var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/1544803905.json";
-            Network.loadJson(url);
+            //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/1544803905.json";
+            Network.loadJson("instruction url");
         }
     }
 
@@ -520,25 +515,11 @@ function download(filename, text) {
     document.body.removeChild(element);
 }
 
-declare var backendlessInit;
-
 window.onload = () => {
-
-    console.log("on load " + localStorage.getItem("login"));
     Controller.topicId = localStorage.getItem("topic");
     Controller.setTextAreaValue("loginTextArea", localStorage.getItem("login"));
     Controller.setTextAreaValue("encriptionKeyTextArea", localStorage.getItem("encriptionKey"));
     enableInput();
-    //backendlessInit();
     Controller.reload();
-
-
-    //CryptoWarper.encrypt("testPasd1", "jsonString1");
-    //CryptoWarper.encrypt("test123", "jsonString2");
-    //CryptoWarper.encrypt("t3", "jsonStringas 1238917230 9871290 371920837019283790182 73901273 908127390 8709238 712093 71 029837 912873 09");
-
-    // https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/data.txt
-
-
 };
 

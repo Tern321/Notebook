@@ -80,28 +80,6 @@
         }
    }
 
-
-    static testHeight(step: number) {
-
-        var scrollHeight = Math.max(
-            document.body.scrollHeight, document.documentElement.scrollHeight,
-            document.body.offsetHeight, document.documentElement.offsetHeight,
-            document.body.clientHeight, document.documentElement.clientHeight
-        );
-
-        console.log(step + "height = " + document.body.style.height + " position " + window.pageYOffset);
-        console.log(step + "height = " + scrollHeight + " position " + window.pageYOffset);
-        const height = window.innerHeight || document.documentElement.clientHeight ||
-            document.body.clientHeight;
-        console.log(step + "height = " + height+ " position " + window.pageYOffset);
-    //var actualWidth = window.innerHeight ||
-    //    document.documentElement.clientHeight  ||
-    //    document.body.clientHeight  ||
-    //    document.body.offsetHeight ;
-
-    //return actualWidth;
-    }
-
     static drawUI(drawAll: boolean) {
 
         if (!(Controller.topicId && Model.childTopicsMap.has(Controller.topicId)))
@@ -111,7 +89,6 @@
         
         var scrollX = window.pageXOffset;
         var scrollY = window.pageYOffset;
-        UIDrawer.testHeight(0);
 
         var rootKey: string = Controller.topicId;
         
@@ -157,10 +134,7 @@
 
         UIDrawer.selectElement(document.getElementById(Controller.selectedContentionId));
 
-        UIDrawer.testHeight(1);
-        console.log("set  " + screenX + " " + scrollY);
         window.scrollTo(scrollX, scrollY);
-        UIDrawer.testHeight(2);
 
     }
 
@@ -197,9 +171,7 @@
             }
         }
     }
-    //static selectArgumentTextArea() {
-    //    document.getElementById("argumentTextArea")
-    //}
+
     static selectElement(element: HTMLElement) {
         var colorTrue = Controller.changeSelectedContention ? "blue" : "red";
         UIDrawer.selectElementBase(element, true, colorTrue, "black");

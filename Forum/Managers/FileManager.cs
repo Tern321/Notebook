@@ -44,13 +44,9 @@ namespace Forum.managers
 
         public static string readJson()
         {
-            if ( !File.Exists(currentFileName()))
-            {
-                return "";
-            }
-
+            string filePath = dataFolderPath + "0";
             string text = "";
-            using (StreamReader streamreader = new StreamReader(currentFileName()))
+            using (StreamReader streamreader = new StreamReader(filePath))
             {
                 text = streamreader.ReadToEnd();
             }
@@ -60,27 +56,54 @@ namespace Forum.managers
         public static bool saveJson(string json, int version)
         {
             System.IO.Directory.CreateDirectory(dataFolderPath);
-            if ( version <= currentVersion)
-            {
-                return false;
-            }
-            currentVersion = version;
-
-            string filePath;
-            if ( version % changesPerFileVersion == 0)
-            {
-                filePath = nextFileName();
-            }
-            else
-            {
-                filePath = currentFileName();
-            }
-
+            string filePath = dataFolderPath + "0";
             using (StreamWriter sw = new StreamWriter(filePath))
             {
                 sw.Write(json);
             }
             return true;
         }
+
+
+        //public static string readJson()
+        //{
+        //    if ( !File.Exists(currentFileName()))
+        //    {
+        //        return "";
+        //    }
+
+        //    string text = "";
+        //    using (StreamReader streamreader = new StreamReader(currentFileName()))
+        //    {
+        //        text = streamreader.ReadToEnd();
+        //    }
+        //    return text;
+        //}
+
+        //public static bool saveJson(string json, int version)
+        //{
+        //    System.IO.Directory.CreateDirectory(dataFolderPath);
+        //    if ( version <= currentVersion)
+        //    {
+        //        return false;
+        //    }
+        //    currentVersion = version;
+
+        //    string filePath;
+        //    if ( version % changesPerFileVersion == 0)
+        //    {
+        //        filePath = nextFileName();
+        //    }
+        //    else
+        //    {
+        //        filePath = currentFileName();
+        //    }
+
+        //    using (StreamWriter sw = new StreamWriter(filePath))
+        //    {
+        //        sw.Write(json);
+        //    }
+        //    return true;
+        //}
     }
 }

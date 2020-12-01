@@ -60,26 +60,12 @@ class UIDrawer {
             return "<button class='topicButton' style=\"left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic('" + contention.id + "')\" >" + contention.text + "</button>";
         }
     }
-    static testHeight(step) {
-        var scrollHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight);
-        console.log(step + "height = " + document.body.style.height + " position " + window.pageYOffset);
-        console.log(step + "height = " + scrollHeight + " position " + window.pageYOffset);
-        const height = window.innerHeight || document.documentElement.clientHeight ||
-            document.body.clientHeight;
-        console.log(step + "height = " + height + " position " + window.pageYOffset);
-        //var actualWidth = window.innerHeight ||
-        //    document.documentElement.clientHeight  ||
-        //    document.body.clientHeight  ||
-        //    document.body.offsetHeight ;
-        //return actualWidth;
-    }
     static drawUI(drawAll) {
         if (!(Controller.topicId && Model.childTopicsMap.has(Controller.topicId))) {
             Controller.topicId = "root";
         }
         var scrollX = window.pageXOffset;
         var scrollY = window.pageYOffset;
-        UIDrawer.testHeight(0);
         var rootKey = Controller.topicId;
         Controller.changeSelectedContention = false;
         var starX = UIDrawer.topicsWidth;
@@ -112,10 +98,7 @@ class UIDrawer {
         contentionsDiv.innerHTML = "";
         this.addCleanObjects(contentionsDiv, Model.contentionsMap.get(rootKey), 0, starX, startY, drawAll);
         UIDrawer.selectElement(document.getElementById(Controller.selectedContentionId));
-        UIDrawer.testHeight(1);
-        console.log("set  " + screenX + " " + scrollY);
         window.scrollTo(scrollX, scrollY);
-        UIDrawer.testHeight(2);
     }
     static recursiveAddRawToDom(contention, contentionsDiv, rawElementIdList) {
         if (!contention.width || contention.width == 0) {
@@ -144,9 +127,6 @@ class UIDrawer {
             }
         }
     }
-    //static selectArgumentTextArea() {
-    //    document.getElementById("argumentTextArea")
-    //}
     static selectElement(element) {
         var colorTrue = Controller.changeSelectedContention ? "blue" : "red";
         UIDrawer.selectElementBase(element, true, colorTrue, "black");
