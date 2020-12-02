@@ -208,8 +208,7 @@ class Controller {
 
         var textArea: any = document.getElementById("argumentTextArea");
         var lines = textArea.value.split(/\r?\n/);
-
-        Model.addContention("<a href=\"" + lines[0].trim() + "\" target=\"_blank\">link</a> " + lines[1], Controller.selectedContentionId);
+        Model.addLink(lines[1], lines[0].trim(), Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();

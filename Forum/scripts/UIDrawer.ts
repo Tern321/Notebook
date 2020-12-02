@@ -182,10 +182,23 @@
         UIDrawer.selectElementBase(element, false, colorTrue, "black");
     }
 
+    static contentionDataToText(contention: Contention): String {
+        if (contention.url == undefined) {
+            return contention.text;
+        }
+        else {
+            var linkName = contention.url;
+            if (linkName.length > 38) {
+                linkName = linkName.substring(0, 38) + " ...";
+            }
+            var str = '<a href="' + contention.url + '" target = "_blank" >' + linkName + "</a><br>" + contention.text;
+            return str;
+        }
+    }
     static contentionHtmlRaw(contention: Contention): HTMLElement
     {
         const element = document.createElement("div");
-        var textString = "<div class='verticalCenter rawContentionElement'  >" + contention.text + "</div>";
+        var textString = "<div class='verticalCenter rawContentionElement'  >" + UIDrawer.contentionDataToText(contention) + "</div>";
         element.innerHTML = "<div class='contentionElement rawContentionElement'  id=" + contention.id + ">" + textString + "</div>";
         return element;
     }
@@ -204,7 +217,7 @@
 
         var positionString: string = " top:" + y + "px; left:" + x + "px;";
         var sizeString: string = "width: " + (UIDrawer.widthForDepth(depth) + 1) + "px; height: " + (height + 1) + "px;";
-        var textString = "<div class='verticalCenter' selectable='true' container='true' >" + contention.text + "</div>";
+        var textString = "<div class='verticalCenter' selectable='true' container='true' >" + UIDrawer.contentionDataToText(contention) + "</div>";
         
         element.innerHTML = "<div class='contentionElement' selectable=true id=" + contention.id + " style=\"" + positionString + sizeString + " background:" + color + "; \" >" + textString + "</div>";
         return element;

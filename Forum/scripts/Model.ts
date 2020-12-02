@@ -31,6 +31,8 @@
         }
     }
 
+    
+
     static parseJson(jsonText: string) {
         //console.log("parseJson " + jsonText);
         Model.contentionsMap = new Map();
@@ -45,11 +47,15 @@
             objectsList.forEach(function (obj) {
                 var cn = new Contention(obj.id, obj.topic);
                 cn.text = obj.text;
+                cn.url = obj.url;
+                //console.log(cn.url);
+                //console.log(cn.text);
                 cn.parentContentionId = obj.parentContentionId;
                 //cn.childs = obj.childs;
                 cn.color = obj.color;
                 cn.collapce = obj.collapce;
                 cn.topic = obj.topic;
+                
                 //cn.width = obj.width;
                 //cn.height = obj.height;
                 if (cn.topic) {
@@ -142,20 +148,26 @@
         Model.updateTopics();
     }
     static addContentionWithId(text: string, parentId: string, id: string) {
+        this.addContentionWithIdUrl(text, undefined, parentId, id);
+    }
+
+    static addContentionWithIdUrl(text: string, url: string, parentId: string, id: string) {
         text = text.trim();
         if (text.length > 0) {
             //console.log("addContentionWithId " + id);
             var cn = new Contention(id, false);
             cn.text = text;
             cn.parentContentionId = parentId;
-            //cn.width = 320;
+            cn.url = url;
 
             Model.contentionsMap.set(cn.id, cn);
             Model.contentionForId(parentId).childs().push(cn.id);
 
         }
     }
-
+    static addLink(text: string, url:string, parentId: string) {
+        this.addContentionWithIdUrl(text, url, parentId, Model.generateRandomId());
+    }
     static addContention(text: string, parentId: string) {
         this.addContentionWithId(text, parentId, Model.generateRandomId());
     }
@@ -206,6 +218,7 @@
 class Contention {
     id: string;
     text: string;
+    url: string;
     parentContentionId: string;
     //childs: string[] = [];
     //childTopics: string[] = [];
