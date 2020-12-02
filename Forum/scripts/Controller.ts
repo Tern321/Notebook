@@ -166,7 +166,14 @@ class Controller {
     static copyContentionCtrlC() {
         var textArea: any = document.getElementById("argumentTextArea");
         textArea.focus();
-        textArea.value = Controller.selectedcontention().text;
+        var contention = Controller.selectedcontention();
+        if (contention.url == undefined) {
+            textArea.value = Controller.selectedcontention().text;
+        }
+        else {
+            textArea.value = Controller.selectedcontention().url;
+        }
+        
         textArea.select();
         setTimeout(function () { Controller.removeTextAreaFocus(); }, 100);
     }

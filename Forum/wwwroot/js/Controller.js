@@ -147,7 +147,13 @@ class Controller {
     static copyContentionCtrlC() {
         var textArea = document.getElementById("argumentTextArea");
         textArea.focus();
-        textArea.value = Controller.selectedcontention().text;
+        var contention = Controller.selectedcontention();
+        if (contention.url == undefined) {
+            textArea.value = Controller.selectedcontention().text;
+        }
+        else {
+            textArea.value = Controller.selectedcontention().url;
+        }
         textArea.select();
         setTimeout(function () { Controller.removeTextAreaFocus(); }, 100);
     }
@@ -183,7 +189,6 @@ class Controller {
         var textArea = document.getElementById("argumentTextArea");
         var lines = textArea.value.split(/\r?\n/);
         Model.addLink(lines[1], lines[0].trim(), Controller.selectedContentionId);
-        //Model.addContention("<a href=\"" + lines[0].trim() + "\" target=\"_blank\">link</a> " + lines[1], Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();

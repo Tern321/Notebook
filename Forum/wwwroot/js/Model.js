@@ -1,6 +1,3 @@
-function startsWith(str, word) {
-    return str.lastIndexOf(word, 0) === 0;
-}
 class Model {
     static decriptJson(jsonText, password) {
         var data = JSON.parse(jsonText);
@@ -43,32 +40,6 @@ class Model {
                 cn.url = obj.url;
                 //console.log(cn.url);
                 //console.log(cn.text);
-                //if (startsWith(cn.text,"<a href=")) {
-                //    var str = cn.text.replace('<a href="', "");
-                //    var linkEndIndex = str.indexOf('" target');
-                //    var url = str.substring(0, linkEndIndex);
-                //    console.log(url);
-                //    //
-                //    var endLinkIndex = str.indexOf('</a> ');
-                //    var text = str.substring(endLinkIndex + 5);
-                //    console.log(text);
-                //    cn.url = url;
-                //    cn.text = text;
-                //}
-                //String indexOf()
-                // 41 symbol
-                //if (cn.url != null) {
-                //    cn.text = '<a href="' + cn.url + '" target = "_blank" >' + cn.url + '</a>';
-                //}
-                //    console.log(cn.text);
-                //    cn.url = cn.text;
-                //    cn.text = "";
-                //    //<a href="unetcom.ru" target = "_blank" > link < /a> unetcom.ru
-                //}
-                //if (startsWith(cn.text, "http") || startsWith(cn.text, "www") || startsWith(cn.text, "<a href=")) {
-                //    console.log(cn.text);
-                //    <a href="unetcom.ru" target = "_blank" > link < /a> unetcom.ru
-                //}
                 cn.parentContentionId = obj.parentContentionId;
                 //cn.childs = obj.childs;
                 cn.color = obj.color;
