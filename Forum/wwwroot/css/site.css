@@ -24,19 +24,19 @@
 
 
 .uiButtons {
+    background-color: #EEE;
     vertical-align: middle;
     display: flex;
 }
 
 .UIBbutton {
-    width: 160px;
+    width: 80px;
     background-color: #FFF;
     border-width: 1px;
     margin: 0px;
 }
 
 .topicButton {
-    background-color: #FFF;
     color: black;
     border: 1px solid #555555;
     text-align: left;
@@ -77,4 +77,15 @@
     max-width: 320px;
     position: relative;
 }
+.topicsBackground {
+    left: 0px;
+    top: 0px; /* Левый нижний угол */
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    position: fixed;
+    background-color: #EEE;
+}
+
 /*font-family: monospace;*/

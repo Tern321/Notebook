@@ -39,10 +39,10 @@ class UIDrawer {
         return this.widthMap.get(depth.toString());
     }
     static drawTopics(topicContention, depth) {
-        UIDrawer.topicIndex++;
         var d1 = document.getElementById("topics");
         const element = document.createElement("div");
         element.innerHTML = UIDrawer.topicButtonHtml(topicContention, UIDrawer.topicIndex, depth);
+        UIDrawer.topicIndex++;
         d1.appendChild(element);
         topicContention.childTopics().forEach(function (childTopicId) {
             var childTopic = Model.contentionForId(childTopicId);
@@ -54,13 +54,21 @@ class UIDrawer {
         var width = UIDrawer.topicsWidth - offset;
         //style =\"" + positionString + sizeString + " background:" + color +
         if (contention.id == Controller.topicId) {
-            return "<button class='topicButton' style=\"background-color: #AAA; left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic('" + contention.id + "')\" >" + contention.text + "</button>";
+            return "<button class='topicButton' style=\"background-color: #AAA; left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
         }
         else {
-            return "<button class='topicButton' style=\"left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic('" + contention.id + "')\" >" + contention.text + "</button>";
+            console.log(contention);
+            var backgroundColor = contention.color;
+            if (backgroundColor == undefined) {
+                backgroundColor = "#FFF";
+            }
+            console.log(backgroundColor);
+            return "<button class='topicButton' style=\"background-color: " + backgroundColor + ";left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
         }
     }
-    static drawUI(drawAll) {
+    //static drawUI(drawAll: boolean) {
+    static drawUI() {
+        var drawAll = Controller.showAllEnabled;
         if (!(Controller.topicId && Model.childTopicsMap.has(Controller.topicId))) {
             Controller.topicId = "root";
         }
@@ -72,6 +80,11 @@ class UIDrawer {
         var startY = 74;
         var topicsDiv = document.getElementById("topics");
         topicsDiv.innerHTML = "";
+        //
+        const element = document.createElement("div");
+        element.innerHTML = '<div class="topicsBackground" style = "width:' + UIDrawer.topicsWidth + 'px;" />';
+        UIDrawer.topicIndex++;
+        topicsDiv.appendChild(element);
         UIDrawer.topicIndex = 0;
         UIDrawer.drawTopics(Model.contentionsMap.get("root"), 0);
         // add raw elements for size calculation

@@ -36,7 +36,7 @@ class Controller {
             Model.moveContention(targetContentionId, Controller.selectedcontention().id);
         }
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static moveContentionSelection(keyCode) {
         var leftKeyCode = 37;
@@ -129,7 +129,7 @@ class Controller {
         if (this.shouldSaveContentionOrder) {
             this.shouldSaveContentionOrder = false;
             Controller.saveUpdatedData();
-            UIDrawer.drawUI(false);
+            UIDrawer.drawUI();
         }
     }
     // add
@@ -142,7 +142,7 @@ class Controller {
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static copyContentionCtrlC() {
         var textArea = document.getElementById("argumentTextArea");
@@ -180,7 +180,7 @@ class Controller {
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static addLink() {
         if (!Controller.selectedContentionId) {
@@ -192,7 +192,7 @@ class Controller {
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static addFile(ev) {
         if (!Controller.selectedContentionId) {
@@ -246,7 +246,7 @@ class Controller {
         selectedcontention.updateText(text);
         textArea.value = "";
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static copyContentionText() {
         var selectedcontention = Controller.selectedcontention();
@@ -257,25 +257,25 @@ class Controller {
         var selectedcontention = Controller.selectedcontention();
         selectedcontention.color = color;
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static deleteContention() {
         //console.log("removeContention " + Controller.selectedContentionId);
         Model.removeContention(Controller.selectedContentionId);
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static collapceContention(contentionId) {
         var cn = Model.contentionsMap.get(contentionId);
         cn.collapce = !cn.collapce;
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static collapceSelectedContention() {
         var cn = Controller.selectedcontention();
         cn.collapce = !cn.collapce;
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static addSelectedToArchive() {
         this.addToArchive(this.selectedContentionId);
@@ -285,7 +285,7 @@ class Controller {
         var archiveContention = Model.archiveForContention(cn.parentContention());
         Model.moveContention(cn.id, archiveContention.id);
         Controller.saveUpdatedData();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     // topic
     static createTopicFromContention() {
@@ -298,16 +298,17 @@ class Controller {
         if (selectedcontention.topic) {
             //Controller.topicId = selectedcontention.id;
         }
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
-    static moveToTopic(topicId) {
+    static moveToTopic(event, topicId) {
+        Controller.showAllEnabled = event.ctrlKey;
         Controller.topicId = topicId;
         localStorage.setItem("topic", Controller.topicId);
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static viewAll() {
         Controller.topicId = "root";
-        UIDrawer.drawUI(true);
+        UIDrawer.drawUI();
     }
     static getTextAreaValue(id) {
         var textArea = document.getElementById(id);
@@ -377,7 +378,7 @@ class Controller {
                     console.log(reader.result);
                     Controller.importJson(reader.result.toString());
                     //Controller.saveUpdatedData();
-                    UIDrawer.drawUI(false);
+                    UIDrawer.drawUI();
                 };
                 reader.readAsText(file);
             }
@@ -438,6 +439,7 @@ Controller.topicId = "root";
 Controller.currentVersion = 11;
 Controller.changeSelectedContention = false;
 Controller.shouldSaveContentionOrder = true;
+Controller.showAllEnabled = false;
 Controller.uploadDataurl = "/Home/saveUdatedData";
 Controller.loadJsonUrl = "/Home/json";
 function download(filename, text) {

@@ -73,7 +73,7 @@ class Model {
         }
         Model.contentionsMap.get("root").topic = true;
         Model.updateTopics();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
     static updateTopics() {
         Model.childTopicsMap.forEach((subtopics, id) => {

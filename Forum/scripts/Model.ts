@@ -87,7 +87,7 @@
 
         Model.contentionsMap.get("root").topic = true;
         Model.updateTopics();
-        UIDrawer.drawUI(false);
+        UIDrawer.drawUI();
     }
 
     static updateTopics() {
