@@ -61,7 +61,7 @@ function checkKeycode(event)
                 Controller.changeContention();
             }
             else {
-                Controller.addContention();
+                Controller.addContentionOrLink();
             }
         }
         else

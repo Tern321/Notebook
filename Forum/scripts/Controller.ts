@@ -148,7 +148,16 @@ class Controller {
             UIDrawer.drawUI();
         }
     }
-
+    // add
+    static addContentionOrLink() {
+        var textArea: any = document.getElementById("argumentTextArea");
+        if (textArea.value.startsWith("http")) {
+            Controller.addLink();
+        }
+        else {
+            Controller.addContention();
+        }
+    }
     // add
     static addContention() {
         if (!Controller.selectedContentionId) {
@@ -212,10 +221,13 @@ class Controller {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
         }
-
+        
         var textArea: any = document.getElementById("argumentTextArea");
-        var lines = textArea.value.split(/\r?\n/);
-        Model.addLink(lines[1], lines[0].trim(), Controller.selectedContentionId);
+        var text: string = textArea.value + " ";
+        var lines = text.split(/\r?\n/);
+        text = text.substring(lines[0].length)
+        text = text.replace("\r", "").trim().split("\n").join("<br>").trim();
+        Model.addLink(text, lines[0], Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         Controller.saveUpdatedData();

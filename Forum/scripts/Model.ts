@@ -153,7 +153,7 @@
 
     static addContentionWithIdUrl(text: string, url: string, parentId: string, id: string) {
         text = text.trim();
-        if (text.length > 0) {
+        if (text.length > 0 || url.length > 0) {
             //console.log("addContentionWithId " + id);
             var cn = new Contention(id, false);
             cn.text = text;

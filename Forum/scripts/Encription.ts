@@ -104,12 +104,12 @@ class CryptoWarper {
         }
 
         
-        console.log("password ", password)
-        console.log("json ", json)
+        //console.log("password ", password)
+        //console.log("json ", json)
 
-        console.log("data.ivJsonString ", data.ivJsonString)
-        console.log("data.saltJson ", data.saltJson)
-        console.log("data.encriptedString", data.encriptedString)
+        //console.log("data.ivJsonString ", data.ivJsonString)
+        //console.log("data.saltJson ", data.saltJson)
+        //console.log("data.encriptedString", data.encriptedString)
 
         
         return data;
