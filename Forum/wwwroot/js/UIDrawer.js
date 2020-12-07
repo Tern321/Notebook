@@ -57,12 +57,10 @@ class UIDrawer {
             return "<button class='topicButton' style=\"background-color: #AAA; left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
         }
         else {
-            console.log(contention);
             var backgroundColor = contention.color;
             if (backgroundColor == undefined) {
                 backgroundColor = "#FFF";
             }
-            console.log(backgroundColor);
             return "<button class='topicButton' style=\"background-color: " + backgroundColor + ";left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
         }
     }

@@ -54,7 +54,7 @@
     transform: translateY(-50%);
     line-height: 0.9em;
     /*border: 1px;*/
-    solid #000000;
+    solid: #000000;
     display: inline-block;
 }
 

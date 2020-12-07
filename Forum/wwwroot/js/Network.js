@@ -8,47 +8,49 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class Network {
-    static saveJson(url, json, loginHash, password) {
+    static sendRequest(url) {
         return __awaiter(this, void 0, void 0, function* () {
-            CryptoWarper.encrypt(password, json).then(function (encriptionData) {
-                var data = new SerializedData();
-                data.encriptedData = encriptionData;
-                data.version = Controller.currentVersion;
-                //console.log(data);
-                //console.log("json data " + JSON.stringify(data));
-                //data.json = json;
-                if (false) {
-                    //console.log("loginHash " + loginHash);
-                    //console.log(JSON.stringify(data));
+            return fetch(url)
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
                 }
-                else {
-                    fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    }).then(function (body) { return body.text(); }).then(function (data) {
-                        if (data == "ok") {
-                            console.log("data saved");
-                        }
-                        else {
-                            alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");
-                            Controller.currentVersion = -1000;
-                        }
-                    });
-                }
+                return response.text();
             });
         });
     }
-    static loadJson(url) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const response = yield fetch(url)
-                .then(function (body) { return body.text(); })
-                .then(function (data) { Model.decriptJson(data, Controller.getEncriptionKey()); })
-                .catch(function (body) {
-                console.log("loadJson error");
-                Model.parseJson("");
-            });
-        });
+    static generateReadUrl(login, appKey, messageKey) {
+        return "https://www.sbitravel.com/rest/messages/read_message?login=" + login + "&password=afghknjaophfpeowhfpohawe&appKey=" + appKey + "&messageKey=" + messageKey;
     }
+    static generateWriteUrl(login, appKey, messageKey, message) {
+        return "https://www.sbitravel.com/rest/messages/send_message?login=" + login + "&password=afghknjaophfpeowhfpohawe&appKey=" + appKey + "&messageKey=" + messageKey + "&message=" + message;
+    }
+    static uploadDataUrl() {
+        if (Network.localhosted) {
+            return "/Home/saveUdatedData";
+        }
+        return "https://www.sbitravel.com/rest/messages/send_message_post";
+    }
+    static loadJsonUrl(login) {
+        if (Network.localhosted) {
+            return "/Home/json";
+        }
+        return Network.generateReadUrl(login, "file", "notepadData");
+    }
+    static getJsonUpdateTimeUrl(login) {
+        if (Network.localhosted) {
+            return "/Home/lastChangeTime";
+        }
+        return Network.generateReadUrl(login, "file", "notepadDataUpdateTime");
+    }
+    static setJsonUpdateTimeUrl(time, login) {
+        if (Network.localhosted) {
+            return "/Home/setLastChangeTime/" + time;
+        }
+        return Network.generateWriteUrl(login, "file", "notepadDataUpdateTime", UpdateDataRequestController.lastChangeTime);
+    }
+}
+Network.localhosted = false;
+class PostRequestData {
 }
 //# sourceMappingURL=Network.js.map

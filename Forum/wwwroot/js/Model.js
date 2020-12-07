@@ -3,7 +3,6 @@ class Model {
         var data = JSON.parse(jsonText);
         //console.log(data.version);
         //console.log(data.json);
-        Controller.currentVersion = data.version;
         if (data.json) {
             //console.log("old data format");
             Model.parseJson(data.json);
@@ -38,8 +37,6 @@ class Model {
                 var cn = new Contention(obj.id, obj.topic);
                 cn.text = obj.text;
                 cn.url = obj.url;
-                //console.log(cn.url);
-                //console.log(cn.text);
                 cn.parentContentionId = obj.parentContentionId;
                 //cn.childs = obj.childs;
                 cn.color = obj.color;
@@ -57,6 +54,7 @@ class Model {
                     parentContentionChildsList.push(cn.id);
                 }
             });
+            UpdateDataRequestController.getLastChangeTime(Network.getJsonUpdateTimeUrl(Controller.getTextAreaValue("loginTextArea").trim()));
         }
         catch (e) {
             console.log("parce error " + e);
@@ -130,7 +128,7 @@ class Model {
     }
     static addContentionWithIdUrl(text, url, parentId, id) {
         text = text.trim();
-        if (text.length > 0) {
+        if (text.length > 0 || url.length > 0) {
             //console.log("addContentionWithId " + id);
             var cn = new Contention(id, false);
             cn.text = text;

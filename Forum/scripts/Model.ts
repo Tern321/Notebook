@@ -8,7 +8,6 @@
         var data: SerializedData = <SerializedData>JSON.parse(jsonText);
         //console.log(data.version);
         //console.log(data.json);
-        Controller.currentVersion = data.version;
         if (data.json) {
             //console.log("old data format");
             Model.parseJson(data.json);
@@ -33,6 +32,7 @@
 
     
 
+
     static parseJson(jsonText: string) {
         //console.log("parseJson " + jsonText);
         Model.contentionsMap = new Map();
@@ -48,8 +48,6 @@
                 var cn = new Contention(obj.id, obj.topic);
                 cn.text = obj.text;
                 cn.url = obj.url;
-                //console.log(cn.url);
-                //console.log(cn.text);
                 cn.parentContentionId = obj.parentContentionId;
                 //cn.childs = obj.childs;
                 cn.color = obj.color;
@@ -68,12 +66,14 @@
                 if (parentContentionChildsList) {
                     parentContentionChildsList.push(cn.id);
                 }
-
+                
             });
+            UpdateDataRequestController.getLastChangeTime(Network.getJsonUpdateTimeUrl(Controller.getTextAreaValue("loginTextArea").trim()));
         }
         catch (e) {
             console.log("parce error " + e);
         }
+
         // add root element if there is no one
         if (!Model.contentionsMap.has("root")) {
             console.log("create root topic");

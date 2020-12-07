@@ -61,5 +61,21 @@ namespace Forum.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+        static long lastChangeTimeValue = 0;
+        public ActionResult lastChangeTime()
+        {
+            
+            return Content(HomeController.lastChangeTimeValue.ToString());
+        }
+
+        [Route("Home/setLastChangeTime/{time:long}")]
+        public ActionResult setLastChangeTime(long time)
+        {
+            HomeController.lastChangeTimeValue = time;
+            return Content("ok");
+        }
+
     }
 }

@@ -127,6 +127,7 @@ function mousePressedTime() {
 }
 
 var pendingClick = 0;
+
 function mouseClick(e) {
     var selectableObject = e.target.getAttribute("selectable")
     if (!selectableObject)  // clicked not on contention

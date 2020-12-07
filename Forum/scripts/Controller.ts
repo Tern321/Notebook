@@ -2,10 +2,10 @@ class Controller {
 
     static topicId: string = "root";
     static selectedContentionId: string;
-    static currentVersion: number = 11;
     static changeSelectedContention: boolean = false;
     static shouldSaveContentionOrder: boolean = true;
     static showAllEnabled: boolean = false;
+    
     // selection
     static selectContention(e) {
         this.selectContentionById(e.getAttribute("id"));
@@ -47,7 +47,7 @@ class Controller {
             }
             Model.moveContention(targetContentionId, Controller.selectedcontention().id);
         }
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static moveContentionSelection(keyCode: number) {
@@ -144,7 +144,7 @@ class Controller {
         if (this.shouldSaveContentionOrder) {
             this.shouldSaveContentionOrder = false;
 
-            Controller.saveUpdatedData();
+            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
             UIDrawer.drawUI();
         }
     }
@@ -168,7 +168,7 @@ class Controller {
         Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
 
@@ -214,7 +214,7 @@ class Controller {
 
         textArea.value = "";
         textArea.focus();
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static addLink() {
@@ -230,7 +230,7 @@ class Controller {
         Model.addLink(text, lines[0], Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
 
     }
@@ -294,7 +294,7 @@ class Controller {
         }
         selectedcontention.updateText(text);
         textArea.value = "";
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static copyContentionText() {
@@ -305,25 +305,25 @@ class Controller {
     static changeContentionColor(color: string) {
         var selectedcontention: Contention = Controller.selectedcontention();
         selectedcontention.color = color;
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static deleteContention() {
         //console.log("removeContention " + Controller.selectedContentionId);
         Model.removeContention(Controller.selectedContentionId)
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static collapceContention(contentionId: string) {
         var cn: Contention = Model.contentionsMap.get(contentionId);
         cn.collapce = !cn.collapce;
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static collapceSelectedContention() {
         var cn: Contention = Controller.selectedcontention();
         cn.collapce = !cn.collapce;
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static addSelectedToArchive() {
@@ -334,7 +334,7 @@ class Controller {
         var archiveContention = Model.archiveForContention(cn.parentContention());
         Model.moveContention(cn.id, archiveContention.id);
 
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
 
@@ -347,7 +347,7 @@ class Controller {
         Model.childTopicsMap.set(selectedcontention.id, []);
         Model.updateTopics();
 
-        Controller.saveUpdatedData();
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         if (selectedcontention.topic) {
             //Controller.topicId = selectedcontention.id;
         }
@@ -381,28 +381,6 @@ class Controller {
         return document.getElementById(contentionId) != undefined;
     }
 
-    static uploadDataurl: string = "/Home/saveUdatedData";
-    static loadJsonUrl: string = "/Home/json";
-    static saveUpdatedData()
-    {
-        const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
-
-        var login = this.getTextAreaValue("loginTextArea").trim();
-        var encriptionKey = this.getTextAreaValue("encriptionKeyTextArea").trim();
-        var hash = Math.abs(hashCode(login));
-        if (login.length > 0) {
-            Controller.currentVersion++;
-            var list: Contention[] = [];
-            Model.rootContention().recursiveAddChilds(list);
-
-            var json = JSON.stringify(list);
-            //console.log(json);
-            //var url = "";
-
-            Network.saveJson(Controller.uploadDataurl, json, hash.toString(), Controller.getEncriptionKey());
-            // sand request on server
-        }
-    }
     static reload() {
         const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
 
@@ -410,28 +388,22 @@ class Controller {
         var encriptionKey = this.getTextAreaValue("encriptionKeyTextArea").trim();
 
         if (login.length > 0) {
-            //console.log(login)
-            //console.log(encriptionKey)
             var hash = Math.abs(hashCode(login));
-            //console.log("login hash " + hash)
-
             localStorage.setItem("login", login);
             localStorage.setItem("encriptionKey", encriptionKey);
-            Network.loadJson(this.loadJsonUrl);
+
+            Network.sendRequest(Network.loadJsonUrl(login)).then(responseString => {
+                Model.decriptJson(responseString, Controller.getEncriptionKey()); 
+            }).catch(function (body) {
+                console.log("loadJson error");
+                Model.parseJson("");
+            });
         }
         else {
             console.log("load default data");
-            //console.log(login)
-            //console.log(encriptionKey)
-            //var hash = Math.abs(hashCode(login));
-            ////console.log("login hash " + hash)
-
-            //localStorage.setItem("login", login);
-            //localStorage.setItem("encriptionKey", encriptionKey);
-
-            //var url = "https://localhost:44380/Home/json"
+            Model.parseJson("");
             //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/1544803905.json";
-            Network.loadJson("instruction url");
+            //Network.loadJson("instruction url");
         }
     }
 
@@ -536,6 +508,9 @@ function download(filename, text) {
 }
 
 window.onload = () => {
+    var url = Network.getJsonUpdateTimeUrl(Controller.getTextAreaValue("loginTextArea").trim());
+
+    //Network.sendRequest(url).then(responseString => { console.log(responseString); });
     Controller.topicId = localStorage.getItem("topic");
     Controller.setTextAreaValue("loginTextArea", localStorage.getItem("login"));
     Controller.setTextAreaValue("encriptionKeyTextArea", localStorage.getItem("encriptionKey"));

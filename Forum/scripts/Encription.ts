@@ -65,7 +65,7 @@ class CryptoWarper {
 
     static async encrypt(password: string, json:string): Promise<EncriptionData> {
         var data: EncriptionData = new EncriptionData();
-        console.log("encripting data");
+        //console.log("encripting data");
 
         if (password.length > 0)
         {
@@ -80,9 +80,9 @@ class CryptoWarper {
             let key = await CryptoWarper.getKey(keyMaterial, salt);
 
             //const keyMaterialJson = crypto.subtle.exportKey("jwk", keyMaterial);
-            const keyJson = crypto.subtle.exportKey("jwk", key);
+            //const keyJson = crypto.subtle.exportKey("jwk", key);
             //console.log("keyMaterial ", keyMaterialJson)
-            console.log("key ", keyJson)
+            //console.log("key ", keyJson)
             let enc = new TextEncoder();
 
             let encoded = enc.encode(json);
