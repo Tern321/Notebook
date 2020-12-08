@@ -218,8 +218,16 @@ class ActionsController {
         UIDrawer.drawUI();
     }
     static deleteContention() {
+        var contentionId = Controller.selectedcontention().id;
+        var nextContention = Controller.selectedcontention().nextOrDefault();
+        if (nextContention == undefined) {
+            this.selectContentionById(Controller.selectedcontention().parentContentionId);
+        }
+        else {
+            this.selectContentionById(nextContention.id);
+        }
         //console.log("removeContention " + Controller.selectedContentionId);
-        Model.removeContention(Controller.selectedContentionId);
+        Model.removeContention(contentionId);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
