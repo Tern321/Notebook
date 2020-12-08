@@ -11,25 +11,25 @@
                 <div>
                     <div>
                         <textarea id="loginTextArea" style="width:180px; height:20px;" placeholder="логин"></textarea>
-                        <button style="background-color:#7bfc03;" onclick="Controller.changeContentionColor('#7bfc03')"> Text</button>
-                        <button style="background-color:#f8fc03;" onclick="Controller.changeContentionColor('#f8fc03')"> Text</button>
-                        <button style="background-color:#03fcbe;" onclick="Controller.changeContentionColor('#03fcbe')"> Text</button>
-                        <button class="UIBbutton" onclick="Controller.addContention()" id='addButton'>Добавить</button>
-                        <button class="UIBbutton" onclick="Controller.changeContention()" id='changeButton'>Изменить</button>
-                        <button class="UIBbutton" onclick="Controller.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
+                        <button style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
+                        <button style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
+                        <button style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
+                        <button class="UIBbutton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
+                        <button class="UIBbutton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
+                        <button class="UIBbutton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
                         <button class="UIBbutton" onclick="">перенести</button>
-                        <button class="UIBbutton" onclick="Controller.import()">import</button>
+                        <button class="UIBbutton" onclick="ActionsController.import()">import</button>
                     </div>
                     <div>
                         <textarea id="encriptionKeyTextArea" style="width:180px; height:20px;" placeholder="ключ для шифрования"></textarea>
-                        <button style="background-color:#FFF;" onclick="Controller.changeContentionColor('#FFF')"> Text</button>
-                        <button style="background-color:#fc03f0;" onclick="Controller.changeContentionColor('#fc03f0')"> Text</button>
-                        <button style="background-color:#fc3503;" onclick="Controller.changeContentionColor('#fc3503')"> Text</button>
-                        <button class="UIBbutton" onclick="Controller.addLink()">Link</button>
-                        <button class="UIBbutton" onclick="Controller.deleteContention()">удалить</button>
-                        <button class="UIBbutton" onclick="Controller.addSelectedToArchive()">(archive)</button>
-                        <button class="UIBbutton" onclick="Controller.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
-                        <button class="UIBbutton" onclick="Controller.export()">export</button>
+                        <button style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
+                        <button style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
+                        <button style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
+                        <button class="UIBbutton" onclick="ActionsController.addLink()">Link</button>
+                        <button class="UIBbutton" onclick="ActionsController.deleteContention()">удалить</button>
+                        <button class="UIBbutton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
+                        <button class="UIBbutton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
+                        <button class="UIBbutton" onclick="ActionsController.export()">export</button>
                     </div>
                 </div>
                 <div>

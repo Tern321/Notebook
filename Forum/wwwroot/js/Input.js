@@ -4,7 +4,7 @@ function enableInput() {
     document.addEventListener('keydown', function (e) {
         //console.log(e);
         if (e.keyCode == 46) {
-            Controller.deleteContention();
+            ActionsController.deleteContention();
         }
     }, false);
     document.getElementById("contentions").addEventListener("auxclick", mouseClick, false);
@@ -41,14 +41,14 @@ function checkKeycode(event) {
     //console.log("ctrlKey:" + event.ctrlKey + " shiftKey:" + event.shiftKey + " altKey:" + event.altKey + " keyCode:" + event.keyCode);
     if ((event.keyCode == 0xA) || (event.keyCode == 0xD)) {
         if (event.shiftKey) {
-            Controller.addContentionList();
+            ActionsController.addContentionList();
         }
         else if (event.ctrlKey) {
             if (Controller.changeSelectedContention) {
-                Controller.changeContention();
+                ActionsController.changeContention();
             }
             else {
-                Controller.addContentionOrLink();
+                ActionsController.addContentionOrLink();
             }
         }
         else {
@@ -66,29 +66,29 @@ function checkKeycode(event) {
     var downKeyCode = 40;
     if ([leftKeyCode, upKeyCode, rightKeyCode, downKeyCode].indexOf(event.keyCode) != -1 && event.ctrlKey) {
         //console.log("move contention selection");
-        Controller.moveContentionSelection(event.keyCode);
+        ActionsController.moveContentionSelection(event.keyCode);
         return false;
     }
     if ([upKeyCode, downKeyCode].indexOf(event.keyCode) != -1 && event.shiftKey) {
         //console.log("move contention");
-        Controller.moveContentionUp(event.keyCode == upKeyCode);
+        ActionsController.moveContentionUp(event.keyCode == upKeyCode);
         return false;
     }
     var textArea = document.getElementById("argumentTextArea");
     if (!textArea.matches(":focus") && event.ctrlKey) {
         if (event.keyCode == 67) {
             //console.log("ctrl c");
-            Controller.copyContentionCtrlC();
+            ActionsController.copyContentionCtrlC();
             return true;
         }
         if (event.keyCode == 88) {
             //console.log("ctrl x");
-            Controller.deleteContentionCtrlX();
+            ActionsController.deleteContentionCtrlX();
             return true;
         }
         if (event.keyCode == 86) {
             //console.log("ctrl v");
-            Controller.addContentionCtrlV();
+            ActionsController.addContentionCtrlV();
             return true;
         }
     }
@@ -131,18 +131,18 @@ function mouseClick(e) {
                 if (pressTime < 800) {
                     if (e.which == 1) {
                         if (e.shiftKey) {
-                            Controller.moveContention(contentionElement.getAttribute("id"));
+                            ActionsController.moveContention(contentionElement.getAttribute("id"));
                         }
                         else if (e.ctrlKey) {
-                            Controller.addToArchive(contentionElement.getAttribute("id"));
+                            ActionsController.addToArchive(contentionElement.getAttribute("id"));
                         }
                         else {
-                            Controller.selectContention(contentionElement);
+                            ActionsController.selectContention(contentionElement);
                         }
                     }
                 }
                 if (e.which == 3) {
-                    Controller.collapceContention(contentionElement.getAttribute("id"));
+                    ActionsController.collapceContention(contentionElement.getAttribute("id"));
                 }
             }, 250); // should match OS multi-click speed
             break;
@@ -150,8 +150,8 @@ function mouseClick(e) {
             //console.log("button:" + e.which + " double click");
             if (e.which == 1) {
                 Controller.changeSelectedContention = true;
-                Controller.selectContention(contentionElement);
-                Controller.copyContentionText();
+                ActionsController.selectContention(contentionElement);
+                ActionsController.copyContentionText();
                 document.getElementById("argumentTextArea").focus();
                 // copy contention text to text field
             }

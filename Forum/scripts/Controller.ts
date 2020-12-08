@@ -6,353 +6,10 @@ class Controller {
     static shouldSaveContentionOrder: boolean = true;
     static showAllEnabled: boolean = false;
     
-    // selection
-    static selectContention(e) {
-        this.selectContentionById(e.getAttribute("id"));
-    }
-    static selectContentionById(contentionId) {
-        UIDrawer.deselectElement(document.getElementById(this.selectedContentionId));
-        UIDrawer.selectElement(document.getElementById(contentionId));
-        this.selectedContentionId = contentionId;
-    }
     static selectedcontention(): Contention {
         return Model.contentionsMap.get(Controller.selectedContentionId);
     }
 
-    // move
-    static moveContention(targetContentionId: string) {
-
-        var testParents = Controller.selectedcontention();
-        if (Model.contentionForId(targetContentionId).parentContentionId == Controller.selectedContentionId) {
-            //console.log("moveContentionToTop");
-            Model.moveContentionToTop(Model.contentionForId(targetContentionId));
-
-            //console.log("moveContention");
-            var archiveContentionId = Model.archiveIdForContention(Controller.selectedContentionId);
-
-            if (Model.contentionsMap.has(archiveContentionId)) {
-                Model.moveContentionToTop(Model.contentionForId(archiveContentionId));
-                //console.log("parent contains archive");
-            }
-
-        }
-        else {
-            // проверка что мы не перемещаем потомка в предка
-            while (testParents && testParents.parentContentionId != "-1") {
-                if (testParents.id == targetContentionId) {
-                    //console.log("error contention move");
-                    return;
-                }
-                testParents = testParents.parentContention();
-            }
-            Model.moveContention(targetContentionId, Controller.selectedcontention().id);
-        }
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static moveContentionSelection(keyCode: number) {
-        var leftKeyCode = 37;
-        var upKeyCode = 38;
-        var rightKeyCode = 39;
-        var downKeyCode = 40;
-        //switch
-        if (keyCode == leftKeyCode) {
-            var contentionIdToSelect = this.selectedcontention().parentContentionId;
-            if (contentionIdToSelect && this.contentionIsVisible(contentionIdToSelect)) {
-                this.selectContentionById(contentionIdToSelect);
-            }
-        }
-        if (keyCode == rightKeyCode) {
-            var contentionIdToSelect = this.selectedcontention().childs()[0];
-            if (contentionIdToSelect && this.contentionIsVisible(contentionIdToSelect)) {
-                this.selectContentionById(contentionIdToSelect);
-            }
-        }
-        if (keyCode == upKeyCode) {
-            var previosContention = this.selectedcontention().previosOrDefault();
-            if (previosContention) {
-                this.selectContentionById(previosContention.id);
-            }
-            else {
-                var offset = 0;
-                var contention = this.selectedcontention();
-                while (contention && !previosContention) {
-                    contention = contention.parentContention();
-                    previosContention = contention.previosOrDefault();
-                    offset++;
-                }
-                contention = previosContention;
-                while (contention.childs().length > 0 && offset > 0 && this.contentionIsVisible(contention.childs()[contention.childs().length - 1])) {
-                    contention = Model.contentionForId(contention.childs()[contention.childs().length - 1]);
-                    offset--;
-                }
-                if (contention) {
-                    this.selectContentionById(contention.id);
-                }
-            }
-        }
-        if (keyCode == downKeyCode) {
-
-            var nextContention = this.selectedcontention().nextOrDefault();
-            if (nextContention) {
-                this.selectContentionById(nextContention.id);
-            }
-            else {
-                var offset = 0;
-                var contention = this.selectedcontention();
-                while (contention && !nextContention) {
-                    contention = contention.parentContention();
-                    nextContention = contention.nextOrDefault();
-                    offset++;
-                }
-                contention = nextContention;
-                while (contention.childs().length > 0 && offset > 0 && this.contentionIsVisible(contention.childs()[0])) {
-                    contention = Model.contentionForId(contention.childs()[0]);
-                    offset--;
-                }
-                if (contention) {
-                    this.selectContentionById(contention.id);
-                }
-            }
-        }
-    }
-    static moveContentionUp(up: boolean) {
-        this.shouldSaveContentionOrder = true;
-        var parentContention = this.selectedcontention().parentContention();
-        var index = parentContention.childs().indexOf(this.selectedContentionId);
-        if (up) {
-            if (index > 0) {
-                // UIDrawer.switchElements
-                var secondElementId = parentContention.childs()[index - 1];
-                UIDrawer.switchElements(document.getElementById(this.selectedContentionId), document.getElementById(secondElementId));
-
-                parentContention.childs()[index] = secondElementId;
-                parentContention.childs()[index - 1] = this.selectedContentionId;
-            }
-        }
-        else {
-            if (index < parentContention.childs().length - 1) {
-                var secondElementId = parentContention.childs()[index + 1];
-                UIDrawer.switchElements(document.getElementById(secondElementId), document.getElementById(this.selectedContentionId));
-
-                parentContention.childs()[index] = secondElementId;
-                parentContention.childs()[index + 1] = this.selectedContentionId;
-            }
-        }
-    }
-    static saveContentionOrder() {
-        if (this.shouldSaveContentionOrder) {
-            this.shouldSaveContentionOrder = false;
-
-            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-            UIDrawer.drawUI();
-        }
-    }
-    // add
-    static addContentionOrLink() {
-        var textArea: any = document.getElementById("argumentTextArea");
-        if (textArea.value.startsWith("http")) {
-            Controller.addLink();
-        }
-        else {
-            Controller.addContention();
-        }
-    }
-    // add
-    static addContention() {
-        if (!Controller.selectedContentionId) {
-            Controller.selectedContentionId = Controller.topicId;
-        }
-
-        var textArea: any = document.getElementById("argumentTextArea");
-        Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
-        textArea.value = "";
-        textArea.focus();
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-
-    static copyContentionCtrlC() {
-        var textArea: any = document.getElementById("argumentTextArea");
-        textArea.focus();
-        var contention = Controller.selectedcontention();
-        if (contention.url == undefined) {
-            textArea.value = Controller.selectedcontention().text;
-        }
-        else {
-            textArea.value = Controller.selectedcontention().url;
-        }
-        
-        textArea.select();
-        setTimeout(function () { Controller.removeTextAreaFocus(); }, 100);
-    }
-
-    static deleteContentionCtrlX() {
-
-    }
-    static removeTextAreaFocus() {
-        var textArea: any = document.getElementById("argumentTextArea");
-        textArea.blur();
-    }
-    static addContentionCtrlV() {
-        var textArea: any = document.getElementById("argumentTextArea");
-        textArea.focus();
-        textArea.select();
-        setTimeout(function () { Controller.addContention(); Controller.removeTextAreaFocus(); }, 100);
-    }
-
-    static addContentionList() {
-        if (!Controller.selectedContentionId) {
-            Controller.selectedContentionId = Controller.topicId;
-        }
-
-        var textArea: any = document.getElementById("argumentTextArea");
-
-        textArea.value.split(/\r?\n/).forEach(function (line) {
-            Model.addContention(line, Controller.selectedContentionId);
-        });
-
-        textArea.value = "";
-        textArea.focus();
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static addLink() {
-        if (!Controller.selectedContentionId) {
-            Controller.selectedContentionId = Controller.topicId;
-        }
-        
-        var textArea: any = document.getElementById("argumentTextArea");
-        var text: string = textArea.value + " ";
-        var lines = text.split(/\r?\n/);
-        text = text.substring(lines[0].length)
-        text = text.replace("\r", "").trim().split("\n").join("<br>").trim();
-        Model.addLink(text, lines[0], Controller.selectedContentionId);
-        textArea.value = "";
-        textArea.focus();
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-
-    }
-    static addFile(ev) {
-        if (!Controller.selectedContentionId) {
-            Controller.selectedContentionId = Controller.topicId;
-        }
-        var link = "";
-        //Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
-
-
-        console.log('File(s) dropped');
-
-        // Prevent default behavior (Prevent file from being opened)
-        ev.preventDefault();
-
-        if (ev.dataTransfer.items) {
-            // Use DataTransferItemList interface to access the file(s)
-            for (var i = 0; i < ev.dataTransfer.items.length; i++) {
-                // If dropped items aren't files, reject them
-                if (ev.dataTransfer.items[i].kind === 'file') {
-                    var file = ev.dataTransfer.items[i].getAsFile();
-                    console.log('... file[' + i + '].name = ' + file.name);
-
-
-                }
-            }
-        } else {
-            // Use DataTransfer interface to access the file(s)
-            for (var i = 0; i < ev.dataTransfer.files.length; i++) {
-                console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
-            }
-        }
-
-    }
-    static readFile(file) {
-        var reader = new FileReader();
-        reader.readAsArrayBuffer(file);
-
-        //var reader = new FileReader();
-        //reader.onload = function (e) {
-        //    var contents = e.target.result;
-        //    fileInput.func(contents)
-        //    document.body.removeChild(fileInput)
-        //}
-        //reader.readAsText(file)
-    }
-    static dragover_handler(ev) {
-        console.log(ev);
-        ev.preventDefault();
-    }
-
-    // change
-    static changeContention() {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        var textArea: any = document.getElementById("argumentTextArea");
-        var text: string = textArea.value.trim();
-
-        if (text.length == 0) {
-            return;
-        }
-        selectedcontention.updateText(text);
-        textArea.value = "";
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static copyContentionText() {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        var textArea: any = document.getElementById("argumentTextArea");
-        textArea.value = selectedcontention.text;
-    }
-    static changeContentionColor(color: string) {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        selectedcontention.color = color;
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static deleteContention() {
-        //console.log("removeContention " + Controller.selectedContentionId);
-        Model.removeContention(Controller.selectedContentionId)
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static collapceContention(contentionId: string) {
-        var cn: Contention = Model.contentionsMap.get(contentionId);
-        cn.collapce = !cn.collapce;
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static collapceSelectedContention() {
-        var cn: Contention = Controller.selectedcontention();
-        cn.collapce = !cn.collapce;
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-    static addSelectedToArchive() {
-        this.addToArchive(this.selectedContentionId);
-    }
-    static addToArchive(contentionId: string) {
-        var cn: Contention = Model.contentionsMap.get(contentionId);
-        var archiveContention = Model.archiveForContention(cn.parentContention());
-        Model.moveContention(cn.id, archiveContention.id);
-
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
-    }
-
-    // topic
-    static createTopicFromContention() {
-        var selectedcontention: Contention = Controller.selectedcontention();
-
-        selectedcontention.collapce = true;
-        selectedcontention.topic = !selectedcontention.topic;
-        Model.childTopicsMap.set(selectedcontention.id, []);
-        Model.updateTopics();
-
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        if (selectedcontention.topic) {
-            //Controller.topicId = selectedcontention.id;
-        }
-        UIDrawer.drawUI();
-    }
     static moveToTopic(event: any, topicId: string) {
         Controller.showAllEnabled = event.ctrlKey;
         
@@ -360,10 +17,11 @@ class Controller {
         localStorage.setItem("topic", Controller.topicId);
         UIDrawer.drawUI();
     }
-    static viewAll() {
-        Controller.topicId = "root";
-        UIDrawer.drawUI();
-    }
+
+    //static viewAll() {
+    //    Controller.topicId = "root";
+    //    UIDrawer.drawUI();
+    //}
 
 
     static getTextAreaValue(id: string): string {
@@ -408,32 +66,13 @@ class Controller {
     }
 
 
-    static import()
-    {
-        var element = document.createElement('div');
-        element.innerHTML = '<input type="file">';
-        var fileInput: any = element.firstChild;
+    static saveContentionOrder() {
+        if (Controller.shouldSaveContentionOrder) {
+            this.shouldSaveContentionOrder = false;
 
-        fileInput.addEventListener('change', function () {
-            var file = fileInput.files[0];
-
-            if (file.name.match(/\.(txt|json)$/)) {
-                var reader = new FileReader();
-
-                reader.onload = function () {
-                    console.log(reader.result);
-                    Controller.importJson(reader.result.toString());
-                    //Controller.saveUpdatedData();
-                    UIDrawer.drawUI();
-                };
-
-                reader.readAsText(file);
-            } else {
-                alert("File not supported, .txt or .json files only");
-            }
-        });
-        fileInput.click();
-        //document.body.removeChild(element);
+            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
+            UIDrawer.drawUI();
+        }
     }
 
     static importJson(json: string) {
@@ -486,12 +125,60 @@ class Controller {
         }
     }
 
-    static export() {
-        var list: Contention[] = [];
-        this.selectedcontention().recursiveAddChilds(list);
-        var json = JSON.stringify(list);
-        download(this.selectedcontention().text + Date.now() + ".json", json);
+    static removeTextAreaFocus() {
+        var textArea: any = document.getElementById("argumentTextArea");
+        textArea.blur();
     }
+
+    static addFile(ev) {
+        if (!Controller.selectedContentionId) {
+            Controller.selectedContentionId = Controller.topicId;
+        }
+        var link = "";
+        //Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
+
+
+        console.log('File(s) dropped');
+
+        // Prevent default behavior (Prevent file from being opened)
+        ev.preventDefault();
+
+        if (ev.dataTransfer.items) {
+            // Use DataTransferItemList interface to access the file(s)
+            for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+                // If dropped items aren't files, reject them
+                if (ev.dataTransfer.items[i].kind === 'file') {
+                    var file = ev.dataTransfer.items[i].getAsFile();
+                    console.log('... file[' + i + '].name = ' + file.name);
+
+
+                }
+            }
+        } else {
+            // Use DataTransfer interface to access the file(s)
+            for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+            }
+        }
+
+    }
+    static readFile(file) {
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(file);
+
+        //var reader = new FileReader();
+        //reader.onload = function (e) {
+        //    var contents = e.target.result;
+        //    fileInput.func(contents)
+        //    document.body.removeChild(fileInput)
+        //}
+        //reader.readAsText(file)
+    }
+    static dragover_handler(ev) {
+        console.log(ev);
+        ev.preventDefault();
+    }
+
 }
 
 function download(filename, text) {
