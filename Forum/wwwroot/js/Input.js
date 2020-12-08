@@ -134,7 +134,7 @@ function mouseClick(e) {
                             ActionsController.moveContention(contentionElement.getAttribute("id"));
                         }
                         else if (e.ctrlKey) {
-                            ActionsController.addToArchive(contentionElement.getAttribute("id"));
+                            Controller.moveToTopic(e, contentionElement.getAttribute("id"));
                         }
                         else {
                             ActionsController.selectContention(contentionElement);
@@ -142,7 +142,12 @@ function mouseClick(e) {
                     }
                 }
                 if (e.which == 3) {
-                    ActionsController.collapceContention(contentionElement.getAttribute("id"));
+                    if (e.ctrlKey) {
+                        ActionsController.addToArchive(contentionElement.getAttribute("id"));
+                    }
+                    else {
+                        ActionsController.collapceContention(contentionElement.getAttribute("id"));
+                    }
                 }
             }, 250); // should match OS multi-click speed
             break;

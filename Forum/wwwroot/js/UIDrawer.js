@@ -67,7 +67,7 @@ class UIDrawer {
     //static drawUI(drawAll: boolean) {
     static drawUI() {
         var drawAll = Controller.showAllEnabled;
-        if (!(Controller.topicId && Model.childTopicsMap.has(Controller.topicId))) {
+        if (!Model.contentionsMap.has(Controller.topicId)) {
             Controller.topicId = "root";
         }
         var scrollX = window.pageXOffset;

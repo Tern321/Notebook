@@ -10,7 +10,7 @@ class Controller {
         return Model.contentionsMap.get(Controller.selectedContentionId);
     }
 
-    static moveToTopic(event: any, topicId: string) {
+    static moveToTopic(event: any, topicId: string) { // refactor to show all property
         Controller.showAllEnabled = event.ctrlKey;
         
         Controller.topicId = topicId;
