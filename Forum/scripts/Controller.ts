@@ -179,6 +179,14 @@ class Controller {
         ev.preventDefault();
     }
 
+    static textAreasHasFocus(): boolean
+    {
+        if (document.getElementById("argumentTextArea").matches(":focus")) { return true; }
+        if (document.getElementById("loginTextArea").matches(":focus")) { return true; }
+        if (document.getElementById("encriptionKeyTextArea").matches(":focus")) { return true; }
+
+        return false;
+    }
 }
 
 function download(filename, text) {

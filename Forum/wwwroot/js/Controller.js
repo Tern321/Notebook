@@ -139,6 +139,18 @@ class Controller {
         console.log(ev);
         ev.preventDefault();
     }
+    static textAreasHasFocus() {
+        if (document.getElementById("argumentTextArea").matches(":focus")) {
+            return true;
+        }
+        if (document.getElementById("loginTextArea").matches(":focus")) {
+            return true;
+        }
+        if (document.getElementById("encriptionKeyTextArea").matches(":focus")) {
+            return true;
+        }
+        return false;
+    }
 }
 Controller.topicId = "root";
 Controller.changeSelectedContention = false;
