@@ -55,7 +55,7 @@
             }
         }
         if (keyCode == rightKeyCode) {
-            var contentionIdToSelect = Controller.selectedcontention().childs()[0];
+            var contentionIdToSelect = Controller.selectedcontention().childs()[Controller.selectedcontention().childs().length-1];
             if (contentionIdToSelect && Controller.contentionIsVisible(contentionIdToSelect)) {
                 this.selectContentionById(contentionIdToSelect);
             }
