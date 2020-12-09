@@ -42,6 +42,7 @@ class Model {
                 cn.color = obj.color;
                 cn.collapce = obj.collapce;
                 cn.topic = obj.topic;
+                cn.linkId = obj.linkId;
                 //cn.width = obj.width;
                 //cn.height = obj.height;
                 if (cn.topic) {
@@ -123,25 +124,33 @@ class Model {
         cn.parentContentionId = toId;
         Model.updateTopics();
     }
-    static addContentionWithId(text, parentId, id) {
-        this.addContentionWithIdUrl(text, undefined, parentId, id);
+    static addContentionWithLinkId(text, parentId, id, linkId) {
+        this.addContention(text, undefined, parentId, id, linkId);
     }
-    static addContentionWithIdUrl(text, url, parentId, id) {
+    static addContentionWithId(text, parentId, id) {
+        this.addContention(text, undefined, parentId, id, undefined);
+    }
+    static addContention(text, url, parentId, id, linkId) {
         text = text.trim();
         if (text.length > 0 || url.length > 0) {
+            var parentContention = Model.contentionForId(parentId);
+            if (parentContention.linkId != undefined) {
+                parentId = parentContention.linkId;
+            }
             //console.log("addContentionWithId " + id);
             var cn = new Contention(id, false);
             cn.text = text;
             cn.parentContentionId = parentId;
             cn.url = url;
+            cn.linkId = linkId;
             Model.contentionsMap.set(cn.id, cn);
             Model.contentionForId(parentId).childs().push(cn.id);
         }
     }
-    static addLink(text, url, parentId) {
-        this.addContentionWithIdUrl(text, url, parentId, Model.generateRandomId());
+    static addUrl(text, url, parentId) {
+        this.addContention(text, url, parentId, Model.generateRandomId(), undefined);
     }
-    static addContention(text, parentId) {
+    static addContentionWithText(text, parentId) {
         this.addContentionWithId(text, parentId, Model.generateRandomId());
     }
     static generateRandomId() {
@@ -206,17 +215,24 @@ class Contention {
     }
     recursiveAddChilds(list) {
         list.push(this);
-        this.childs().forEach(function (childContentionId) {
-            var childContention = Model.contentionForId(childContentionId);
-            childContention.recursiveAddChilds(list);
-        });
+        if (this.linkId == undefined) {
+            this.childs().forEach(function (childContentionId) {
+                var childContention = Model.contentionForId(childContentionId);
+                childContention.recursiveAddChilds(list);
+            });
+        }
     }
     updateText(text) {
         this.text = text;
         this.width = undefined;
     }
     childs() {
-        return Model.childContentionMap.get(this.id);
+        if (this.linkId == undefined) {
+            return Model.childContentionMap.get(this.id);
+        }
+        else {
+            return Model.childContentionMap.get(this.linkId);
+        }
     }
     childTopics() {
         return Model.childTopicsMap.get(this.id);

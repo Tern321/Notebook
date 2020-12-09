@@ -1,6 +1,6 @@
 ﻿class Network
 {
-    static localhosted: boolean = false;
+    static localhosted: boolean = true;
 
 
     static async sendRequest(url: string): Promise<string> {

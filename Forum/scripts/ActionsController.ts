@@ -134,11 +134,21 @@
     }
     
     // add
-    static addContentionOrLink() {
+    static addLink() {
+
+        var contention = Controller.selectedcontention();
+        var parentContentionId = contention.parentContentionId;
+        var text = "Link (" + contention.text + ")";
+        Model.addContention(text, contention.url, contention.parentContentionId, Model.generateRandomId(), contention.id)
+        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
+        UIDrawer.drawUI();
+    }
+
+    static addContentionOrUrl() {
         
         var textArea: any = Controller.argumentTextArea();
         if (textArea.value.startsWith("http")) {
-            ActionsController.addLink();
+            ActionsController.addUrl();
         }
         else {
             ActionsController.addContention();
@@ -151,7 +161,7 @@
         }
 
         var textArea: any = Controller.argumentTextArea();
-        Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
+        Model.addContentionWithText(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
@@ -203,7 +213,7 @@
             var textArea: any = Controller.argumentTextArea();
             textArea.focus();
             textArea.select();
-            setTimeout(function () { ActionsController.addContentionOrLink(); Controller.removeTextAreaFocus(); }, 50);
+            setTimeout(function () { ActionsController.addContentionOrUrl(); Controller.removeTextAreaFocus(); }, 50);
         }
     }
 
@@ -216,10 +226,10 @@
 
         textArea.value.split(/\r?\n/).forEach(function (line) {
             if (line.startsWith("http")) {
-                Model.addLink("", line, Controller.selectedContentionId)
+                Model.addUrl("", line, Controller.selectedContentionId)
             }
             else {
-                Model.addContention(line, Controller.selectedContentionId);
+                Model.addContentionWithText(line, Controller.selectedContentionId);
             }
         });
 
@@ -228,7 +238,7 @@
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
-    static addLink() {
+    static addUrl() {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
         }
@@ -238,7 +248,7 @@
         var lines = text.split(/\r?\n/);
         text = text.substring(lines[0].length)
         text = text.replace("\r", "").trim().split("\n").join("<br>").trim();
-        Model.addLink(text, lines[0], Controller.selectedContentionId);
+        Model.addUrl(text, lines[0], Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();

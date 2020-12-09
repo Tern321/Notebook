@@ -53,7 +53,7 @@
                 cn.color = obj.color;
                 cn.collapce = obj.collapce;
                 cn.topic = obj.topic;
-                
+                cn.linkId = obj.linkId;
                 //cn.width = obj.width;
                 //cn.height = obj.height;
                 if (cn.topic) {
@@ -62,6 +62,7 @@
                 //cn.childTopics = obj.childTopics;
                 Model.contentionsMap.set(cn.id, cn);
 
+                
                 var parentContentionChildsList = Model.childContentionMap.get(cn.parentContentionId);
                 if (parentContentionChildsList) {
                     parentContentionChildsList.push(cn.id);
@@ -147,28 +148,36 @@
         cn.parentContentionId = toId;
         Model.updateTopics();
     }
-    static addContentionWithId(text: string, parentId: string, id: string) {
-        this.addContentionWithIdUrl(text, undefined, parentId, id);
+    static addContentionWithLinkId(text: string, parentId: string, id: string, linkId:string) {
+        this.addContention(text, undefined, parentId, id, linkId);
     }
 
-    static addContentionWithIdUrl(text: string, url: string, parentId: string, id: string) {
+    static addContentionWithId(text: string, parentId: string, id: string) {
+        this.addContention(text, undefined, parentId, id, undefined);
+    }
+
+    static addContention(text: string, url: string, parentId: string, id: string, linkId: string) {
         text = text.trim();
         if (text.length > 0 || url.length > 0) {
+            var parentContention = Model.contentionForId(parentId);
+            if (parentContention.linkId != undefined) {
+                parentId = parentContention.linkId;
+            }
             //console.log("addContentionWithId " + id);
             var cn = new Contention(id, false);
             cn.text = text;
             cn.parentContentionId = parentId;
             cn.url = url;
-
+            cn.linkId = linkId;
             Model.contentionsMap.set(cn.id, cn);
             Model.contentionForId(parentId).childs().push(cn.id);
 
         }
     }
-    static addLink(text: string, url:string, parentId: string) {
-        this.addContentionWithIdUrl(text, url, parentId, Model.generateRandomId());
+    static addUrl(text: string, url: string, parentId: string) {
+        this.addContention(text, url, parentId, Model.generateRandomId(), undefined);
     }
-    static addContention(text: string, parentId: string) {
+    static addContentionWithText(text: string, parentId: string) {
         this.addContentionWithId(text, parentId, Model.generateRandomId());
     }
 
@@ -230,6 +239,8 @@ class Contention {
     collapce: boolean = false;
     topic: boolean = false;
 
+    linkId: string;
+
     constructor(id: string, topic: boolean) {
         this.id = id;
         Model.childContentionMap.set(this.id, []);
@@ -251,17 +262,25 @@ class Contention {
 
     recursiveAddChilds(list: Contention[]) {
         list.push(this);
-        this.childs().forEach(function (childContentionId) {
-            var childContention = Model.contentionForId(childContentionId);
-            childContention.recursiveAddChilds(list);
-        });
+        if (this.linkId == undefined) {
+            this.childs().forEach(function (childContentionId) {
+                var childContention = Model.contentionForId(childContentionId);
+                childContention.recursiveAddChilds(list);
+            });
+        }
     }
     updateText(text: string) {
         this.text = text;
         this.width = undefined;
     }
     childs() {
-        return Model.childContentionMap.get(this.id);
+        if (this.linkId == undefined) {
+            return Model.childContentionMap.get(this.id);
+        }
+        else {
+            return Model.childContentionMap.get(this.linkId); 
+        }
+        
     }
     childTopics() {
         return Model.childTopicsMap.get(this.id);
