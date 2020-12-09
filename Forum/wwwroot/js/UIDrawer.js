@@ -110,6 +110,9 @@ class UIDrawer {
         this.addCleanObjects(contentionsDiv, Model.contentionsMap.get(rootKey), 0, starX, startY, drawAll);
         UIDrawer.selectElement(document.getElementById(Controller.selectedContentionId));
         window.scrollTo(scrollX, scrollY);
+        Controller.cutContentionList.forEach(function (contentionId) {
+            Controller.setContentionBorderType(contentionId, true);
+        });
     }
     static recursiveAddRawToDom(contention, contentionsDiv, rawElementIdList) {
         if (!contention.width || contention.width == 0) {
@@ -137,6 +140,9 @@ class UIDrawer {
                 element.style.borderWidth = "1px";
             }
         }
+    }
+    static setElementBorderType(element, dashed) {
+        element.style.border = dashed ? "dashed" : "solid";
     }
     static selectElement(element) {
         var colorTrue = Controller.changeSelectedContention ? "blue" : "red";

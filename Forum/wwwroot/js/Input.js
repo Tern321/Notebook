@@ -82,7 +82,7 @@ function checkKeycode(event) {
         }
         if (event.keyCode == 88) {
             //console.log("ctrl x");
-            ActionsController.deleteContentionCtrlX();
+            ActionsController.cutContentionCtrlX();
             return true;
         }
         if (event.keyCode == 86) {

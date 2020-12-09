@@ -5,7 +5,9 @@ class Controller {
     static changeSelectedContention: boolean = false;
     static shouldSaveContentionOrder: boolean = true;
     static showAllEnabled: boolean = false;
-    
+
+    static cutContentionList: string[] = []
+
     static selectedcontention(): Contention {
         return Model.contentionsMap.get(Controller.selectedContentionId);
     }
@@ -125,9 +127,15 @@ class Controller {
         }
     }
 
+    static argumentTextArea(): any {
+        return document.getElementById("argumentTextArea");
+    }
+    static cleanTextArea() {
+        Controller.argumentTextArea().text = "";
+    }
+
     static removeTextAreaFocus() {
-        var textArea: any = document.getElementById("argumentTextArea");
-        textArea.blur();
+        Controller.argumentTextArea().blur();
     }
 
     static addFile(ev) {
@@ -181,11 +189,24 @@ class Controller {
 
     static textAreasHasFocus(): boolean
     {
-        if (document.getElementById("argumentTextArea").matches(":focus")) { return true; }
+        if (Controller.argumentTextArea().matches(":focus")) { return true; }
         if (document.getElementById("loginTextArea").matches(":focus")) { return true; }
         if (document.getElementById("encriptionKeyTextArea").matches(":focus")) { return true; }
 
         return false;
+    }
+
+    static setContentionBorderType(id:string, dashed: boolean) {
+        var element = document.getElementById(id);
+        if (element != undefined) {
+            UIDrawer.setElementBorderType(element, dashed);
+        }
+    }
+    static cleanCutContentionList() {
+        Controller.cutContentionList.forEach(function (contentionId) {
+            Controller.setContentionBorderType(contentionId, false);
+        });
+        Controller.cutContentionList = [];
     }
 }
 

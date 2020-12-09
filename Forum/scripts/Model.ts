@@ -136,15 +136,15 @@
     }
 
 
-    static moveContention(id: string, parentId: string) {
+    static moveContention(id: string, toId: string) {
         var cn = Model.contentionForId(id);
         var parentTopic = cn.parentTopic();
         Model.removeContention(id);
         Model.updateTopics();
 
-        Model.contentionForId(parentId).childs().push(cn.id);
+        Model.contentionForId(toId).childs().push(cn.id);
         Model.contentionsMap.set(cn.id, cn);
-        cn.parentContentionId = parentId;
+        cn.parentContentionId = toId;
         Model.updateTopics();
     }
     static addContentionWithId(text: string, parentId: string, id: string) {

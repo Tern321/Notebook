@@ -113,14 +113,14 @@ class Model {
         Model.contentionsMap.delete(id);
         Model.updateTopics();
     }
-    static moveContention(id, parentId) {
+    static moveContention(id, toId) {
         var cn = Model.contentionForId(id);
         var parentTopic = cn.parentTopic();
         Model.removeContention(id);
         Model.updateTopics();
-        Model.contentionForId(parentId).childs().push(cn.id);
+        Model.contentionForId(toId).childs().push(cn.id);
         Model.contentionsMap.set(cn.id, cn);
-        cn.parentContentionId = parentId;
+        cn.parentContentionId = toId;
         Model.updateTopics();
     }
     static addContentionWithId(text, parentId, id) {

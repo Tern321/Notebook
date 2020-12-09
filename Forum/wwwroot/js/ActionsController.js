@@ -124,7 +124,7 @@ class ActionsController {
     }
     // add
     static addContentionOrLink() {
-        var textArea = document.getElementById("argumentTextArea");
+        var textArea = Controller.argumentTextArea();
         if (textArea.value.startsWith("http")) {
             ActionsController.addLink();
         }
@@ -137,7 +137,7 @@ class ActionsController {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
         }
-        var textArea = document.getElementById("argumentTextArea");
+        var textArea = Controller.argumentTextArea();
         Model.addContention(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
@@ -145,7 +145,8 @@ class ActionsController {
         UIDrawer.drawUI();
     }
     static copyContentionCtrlC() {
-        var textArea = document.getElementById("argumentTextArea");
+        Controller.cleanCutContentionList();
+        var textArea = Controller.argumentTextArea();
         textArea.focus();
         var contention = Controller.selectedcontention();
         if (contention.url == undefined) {
@@ -155,23 +156,47 @@ class ActionsController {
             textArea.value = Controller.selectedcontention().url;
         }
         textArea.select();
-        setTimeout(function () { Controller.removeTextAreaFocus(); }, 100);
+        setTimeout(function () { Controller.removeTextAreaFocus(); }, 50);
     }
-    static deleteContentionCtrlX() {
+    static cutContentionCtrlX() {
+        var indexInCutArray = Controller.cutContentionList.indexOf(Controller.selectedContentionId);
+        if (indexInCutArray > -1) {
+            Controller.cutContentionList.splice(indexInCutArray, 1);
+            Controller.setContentionBorderType(Controller.selectedContentionId, false);
+        }
+        else {
+            Controller.cutContentionList.push(Controller.selectedContentionId);
+            Controller.setContentionBorderType(Controller.selectedContentionId, true);
+        }
     }
     static addContentionCtrlV() {
-        var textArea = document.getElementById("argumentTextArea");
-        textArea.focus();
-        textArea.select();
-        setTimeout(function () { ActionsController.addContention(); Controller.removeTextAreaFocus(); }, 100);
+        if (Controller.cutContentionList.length > 0) {
+            Controller.cutContentionList.forEach(function (contentionId) {
+                Model.moveContention(contentionId, Controller.selectedContentionId);
+            });
+            Controller.cleanCutContentionList();
+            UIDrawer.drawUI();
+            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
+        }
+        else {
+            var textArea = Controller.argumentTextArea();
+            textArea.focus();
+            textArea.select();
+            setTimeout(function () { ActionsController.addContentionOrLink(); Controller.removeTextAreaFocus(); }, 50);
+        }
     }
     static addContentionList() {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
         }
-        var textArea = document.getElementById("argumentTextArea");
+        var textArea = Controller.argumentTextArea();
         textArea.value.split(/\r?\n/).forEach(function (line) {
-            Model.addContention(line, Controller.selectedContentionId);
+            if (line.startsWith("http")) {
+                Model.addLink("", line, Controller.selectedContentionId);
+            }
+            else {
+                Model.addContention(line, Controller.selectedContentionId);
+            }
         });
         textArea.value = "";
         textArea.focus();
@@ -182,7 +207,7 @@ class ActionsController {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
         }
-        var textArea = document.getElementById("argumentTextArea");
+        var textArea = Controller.argumentTextArea();
         var text = textArea.value + " ";
         var lines = text.split(/\r?\n/);
         text = text.substring(lines[0].length);
@@ -196,7 +221,7 @@ class ActionsController {
     // change
     static changeContention() {
         var selectedcontention = Controller.selectedcontention();
-        var textArea = document.getElementById("argumentTextArea");
+        var textArea = Controller.argumentTextArea();
         var text = textArea.value.trim();
         if (text.length == 0) {
             return;
@@ -208,7 +233,7 @@ class ActionsController {
     }
     static copyContentionText() {
         var selectedcontention = Controller.selectedcontention();
-        var textArea = document.getElementById("argumentTextArea");
+        var textArea = Controller.argumentTextArea();
         textArea.value = selectedcontention.text;
     }
     static changeContentionColor(color) {

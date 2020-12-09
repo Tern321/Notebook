@@ -145,6 +145,10 @@
 
         window.scrollTo(scrollX, scrollY);
 
+        Controller.cutContentionList.forEach(function (contentionId) {
+            Controller.setContentionBorderType(contentionId, true);
+        });
+        
     }
 
     static recursiveAddRawToDom(contention: Contention, contentionsDiv, rawElementIdList: string[]) {
@@ -180,11 +184,16 @@
             }
         }
     }
+    
+    static setElementBorderType(element: HTMLElement, dashed: boolean) {
+        element.style.border = dashed ? "dashed" : "solid";
+    }
 
     static selectElement(element: HTMLElement) {
         var colorTrue = Controller.changeSelectedContention ? "blue" : "red";
         UIDrawer.selectElementBase(element, true, colorTrue, "black");
     }
+
     static deselectElement(element: HTMLElement)
     {
         var colorTrue = Controller.changeSelectedContention ? "blue" : "red";
