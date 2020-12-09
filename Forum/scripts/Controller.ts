@@ -13,7 +13,7 @@ class Controller {
     }
 
     static moveToTopic(event: any, topicId: string) { // refactor to show all property
-        Controller.showAllEnabled = event.ctrlKey;
+        Controller.showAllEnabled = event.ctrlKey || event.metaKey;
         
         Controller.topicId = topicId;
         localStorage.setItem("topic", Controller.topicId);

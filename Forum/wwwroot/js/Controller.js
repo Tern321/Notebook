@@ -3,7 +3,7 @@ class Controller {
         return Model.contentionsMap.get(Controller.selectedContentionId);
     }
     static moveToTopic(event, topicId) {
-        Controller.showAllEnabled = event.ctrlKey;
+        Controller.showAllEnabled = event.ctrlKey || event.metaKey;
         Controller.topicId = topicId;
         localStorage.setItem("topic", Controller.topicId);
         UIDrawer.drawUI();

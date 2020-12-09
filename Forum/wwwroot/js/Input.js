@@ -43,7 +43,7 @@ function checkKeycode(event) {
         if (event.shiftKey) {
             ActionsController.addContentionList();
         }
-        else if (event.ctrlKey) {
+        else if (universalCtrlPressed(event)) {
             if (Controller.changeSelectedContention) {
                 ActionsController.changeContention();
             }
@@ -64,7 +64,7 @@ function checkKeycode(event) {
     var upKeyCode = 38;
     var rightKeyCode = 39;
     var downKeyCode = 40;
-    if ([leftKeyCode, upKeyCode, rightKeyCode, downKeyCode].indexOf(event.keyCode) != -1 && event.ctrlKey) {
+    if ([leftKeyCode, upKeyCode, rightKeyCode, downKeyCode].indexOf(event.keyCode) != -1 && universalCtrlPressed(event)) {
         //console.log("move contention selection");
         ActionsController.moveContentionSelection(event.keyCode);
         return false;
@@ -74,7 +74,7 @@ function checkKeycode(event) {
         ActionsController.moveContentionUp(event.keyCode == upKeyCode);
         return false;
     }
-    if (!Controller.textAreasHasFocus() && event.ctrlKey) {
+    if (!Controller.textAreasHasFocus() && universalCtrlPressed(event)) {
         if (event.keyCode == 67) {
             //console.log("ctrl c");
             ActionsController.copyContentionCtrlC();
@@ -103,6 +103,9 @@ function mousePressedTime() {
     return (end.getTime() - start.getTime());
 }
 var pendingClick = 0;
+function universalCtrlPressed(event) {
+    return event.ctrlKey || event.metaKey;
+}
 function mouseClick(e) {
     var selectableObject = e.target.getAttribute("selectable");
     if (!selectableObject) // clicked not on contention
@@ -132,7 +135,7 @@ function mouseClick(e) {
                         if (e.shiftKey) {
                             ActionsController.moveContention(contentionElement.getAttribute("id"));
                         }
-                        else if (e.ctrlKey) {
+                        else if (universalCtrlPressed(e)) {
                             Controller.moveToTopic(e, contentionElement.getAttribute("id"));
                         }
                         else {
@@ -141,7 +144,7 @@ function mouseClick(e) {
                     }
                 }
                 if (e.which == 3) {
-                    if (e.ctrlKey) {
+                    if (universalCtrlPressed(e)) {
                         ActionsController.addToArchive(contentionElement.getAttribute("id"));
                     }
                     else {
