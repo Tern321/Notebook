@@ -40,8 +40,6 @@ function enableInput()
     });
     checkWindowSize();
     window.addEventListener('resize', checkWindowSize);
-    //setTimeout(function () { window.addEventListener('resize', checkWindowSize); }, 50);
-
 }
 
 function checkWindowSize() {
@@ -65,18 +63,6 @@ function checkWindowSize() {
         uiElement.style.position = "fixed";
         topicsElement.style.position = "fixed";
     }
-    console.log(window.innerHeight);
-
-    //1196 x 659
-
-    //var topicsElement = document.getElementById("topics");
-    //if (window.innerWidth < 600) {
-    //    uiElement.style.position = "relative";
-    //}
-    //else {
-    //    uiElement.style.position = "fixed";
-    //}
-    //console.log(window.innerWidth + "  " + window.innerHeight);
 }
 
 
