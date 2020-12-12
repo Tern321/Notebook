@@ -38,7 +38,32 @@ function enableInput()
         UIDrawer.selectElementBase(document.getElementById("changeButton"), false, "red", "black");
         UIDrawer.selectElementBase(document.getElementById("argumentTextArea"), false, "red", "black");
     });
+
+    window.addEventListener('resize', checkWindowSize);
+
 }
+
+function checkWindowSize() {
+    // width < 798 // 
+    // height < 600 // topics count + 20 || 500
+    var uiElement = document.getElementById("uiDiv");
+    if (window.innerHeight < 600) {
+        uiElement.style.position = "absolute";
+    }
+    else {
+        uiElement.style.position = "fixed";
+    }
+
+    //var topicsElement = document.getElementById("topics");
+    //if (window.innerWidth < 600) {
+    //    uiElement.style.position = "relative";
+    //}
+    //else {
+    //    uiElement.style.position = "fixed";
+    //}
+    //console.log(window.innerWidth + "  " + window.innerHeight);
+}
+
 
 function keyUp(event) {
     if (event.keyCode == 16)

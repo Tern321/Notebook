@@ -1,6 +1,8 @@
 ﻿class Network
 {
-    static localhosted: boolean = true;
+    static localhosted(): boolean {
+        return (location.hostname === "localhost" || location.hostname === "127.0.0.1");
+    }
 
 
     static async sendRequest(url: string): Promise<string> {
@@ -22,7 +24,7 @@
     }
 
     static uploadDataUrl(): string {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/saveUdatedData"
         }
         return "https://www.sbitravel.com/rest/messages/send_message_post";
@@ -30,21 +32,21 @@
 
     static loadJsonUrl(login: string): string {
        
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/json"
         }
         return Network.generateReadUrl(login, "file", "notepadData");
     }
 
     static getJsonUpdateTimeUrl(login: string): string {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/lastChangeTime"
         }
         return Network.generateReadUrl(login, "file", "notepadDataUpdateTime");
     }
 
     static setJsonUpdateTimeUrl(time: string, login: string): string {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/setLastChangeTime/" + time;
         }
         return Network.generateWriteUrl(login, "file", "notepadDataUpdateTime", UpdateDataRequestController.lastChangeTime)
