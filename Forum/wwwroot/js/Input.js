@@ -29,6 +29,39 @@ function enableInput() {
         UIDrawer.selectElementBase(document.getElementById("changeButton"), false, "red", "black");
         UIDrawer.selectElementBase(document.getElementById("argumentTextArea"), false, "red", "black");
     });
+    checkWindowSize();
+    window.addEventListener('resize', checkWindowSize);
+    //setTimeout(function () { window.addEventListener('resize', checkWindowSize); }, 50);
+}
+function checkWindowSize() {
+    var smallWindow = false;
+    var topicsElement = document.getElementById("topics");
+    var uiElement = document.getElementById("uiDiv");
+    if (window.innerHeight < 600) {
+        smallWindow = true;
+    }
+    if (window.innerWidth < 1200) {
+        smallWindow = true;
+    }
+    topicsElement.style.height = (window.innerHeight - 17) + "px";
+    if (smallWindow) {
+        uiElement.style.position = "absolute";
+        topicsElement.style.position = "absolute";
+    }
+    else {
+        uiElement.style.position = "fixed";
+        topicsElement.style.position = "fixed";
+    }
+    console.log(window.innerHeight);
+    //1196 x 659
+    //var topicsElement = document.getElementById("topics");
+    //if (window.innerWidth < 600) {
+    //    uiElement.style.position = "relative";
+    //}
+    //else {
+    //    uiElement.style.position = "fixed";
+    //}
+    //console.log(window.innerWidth + "  " + window.innerHeight);
 }
 function keyUp(event) {
     if (event.keyCode == 16) {

@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class Network {
+    static localhosted() {
+        return (location.hostname === "localhost" || location.hostname === "127.0.0.1");
+    }
     static sendRequest(url) {
         return __awaiter(this, void 0, void 0, function* () {
             return fetch(url)
@@ -26,31 +29,30 @@ class Network {
         return "https://www.sbitravel.com/rest/messages/send_message?login=" + login + "&password=afghknjaophfpeowhfpohawe&appKey=" + appKey + "&messageKey=" + messageKey + "&message=" + message;
     }
     static uploadDataUrl() {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/saveUdatedData";
         }
         return "https://www.sbitravel.com/rest/messages/send_message_post";
     }
     static loadJsonUrl(login) {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/json";
         }
         return Network.generateReadUrl(login, "file", "notepadData");
     }
     static getJsonUpdateTimeUrl(login) {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/lastChangeTime";
         }
         return Network.generateReadUrl(login, "file", "notepadDataUpdateTime");
     }
     static setJsonUpdateTimeUrl(time, login) {
-        if (Network.localhosted) {
+        if (Network.localhosted()) {
             return "/Home/setLastChangeTime/" + time;
         }
         return Network.generateWriteUrl(login, "file", "notepadDataUpdateTime", UpdateDataRequestController.lastChangeTime);
     }
 }
-Network.localhosted = true;
 class PostRequestData {
 }
 //# sourceMappingURL=Network.js.map

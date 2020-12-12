@@ -1,46 +1,66 @@
 ﻿
-
+/*menuitem*/
 .menuStyle {
     position: fixed; /* Фиксированное положение */
-    left: 200px;
+    left: 220px;
     top: 0; /* Левый нижний угол */
     background-color: #FFF;
+    background-color: #EEE;
+    /*vertical-align: middle;*/
+    display: flex;
+    /*max-height:32px;*/
+
 }
-
-.topicsStyle {
-    font-size: 120%;
-    font-family: monospace;
-}
-
-*, ::after, ::before {
-    box-sizing: border-box;
-}
-
-.verticalContainer {
-    height: 14px;
-    border: 1px solid black;
-}
-
-
 
 .uiButtons {
-    background-color: #EEE;
-    vertical-align: middle;
-    display: flex;
+    
 }
 
 .UIBbutton {
     width: 80px;
     background-color: #FFF;
-    border-width: 1px;
     margin: 0px;
+    padding: 0px;
+    border: 1px solid black;
+}
+
+/*topics*/
+
+.topicsStyle {
+    left: 0px;
+    top: 0px;
+    position: absolute;
+    width: 220px;
+    height: 500px;
+    overflow-y: scroll;
+    float: right;
+    background-color: #EEE;
 }
 
 .topicButton {
+    float: right;
     color: black;
     border: 1px solid #555555;
-    text-align: left;
+    margin-top:-1px;
+    /*text-align: left;*/
+    /*position: fixed;*/
+}
+
+.topicsBackground {
+    left: 0px;
+    top: 0px; 
+    border: 0px;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
     position: fixed;
+    background-color: #EEE;
+}
+
+ /*contentions*/
+.verticalContainer {
+    height: 14px;
+    border: 1px solid black;
 }
 
 .verticalCenter {
@@ -77,15 +97,7 @@
     max-width: 320px;
     position: relative;
 }
-.topicsBackground {
-    left: 0px;
-    top: 0px; /* Левый нижний угол */
-    border: 0px;
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    position: fixed;
-    background-color: #EEE;
-}
 
-/*font-family: monospace;*/
+*, ::after, ::before {
+    box-sizing: border-box;
+}

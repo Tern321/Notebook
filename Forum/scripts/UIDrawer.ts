@@ -72,14 +72,14 @@
         var width = UIDrawer.topicsWidth - offset;
         //style =\"" + positionString + sizeString + " background:" + color +
         if (contention.id == Controller.topicId) {
-            return "<button class='topicButton' style=\"background-color: #AAA; left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>"
+            return "<button class='topicButton' style=\"background-color: #AAA; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>"
         }
         else {
             var backgroundColor = contention.color;
             if (backgroundColor == undefined) {
                 backgroundColor = "#FFF";
             }
-            return "<button class='topicButton' style=\"background-color: " + backgroundColor+";left: " + offset + "px; top: " + index * 19 + "px; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>"
+            return "<button class='topicButton' style=\"background-color: " + backgroundColor+"; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>"
         }
    }
     //static drawUI(drawAll: boolean) {
@@ -97,16 +97,14 @@
         
 
         Controller.changeSelectedContention = false;
-        var starX = UIDrawer.topicsWidth;
+        var starX = UIDrawer.topicsWidth + 20;
         var startY = 74;
 
         var topicsDiv = document.getElementById("topics");
         topicsDiv.innerHTML = "";
-        //
-        const element = document.createElement("div");
-        element.innerHTML = '<div class="topicsBackground" style = "width:' + UIDrawer.topicsWidth+'px;" />'
-        UIDrawer.topicIndex++;
-        topicsDiv.appendChild(element);
+        //const element = document.createElement("div");
+        //element.innerHTML = '<div class="topicsBackground" style = "width:' + UIDrawer.topicsWidth+'px;" />'
+        //topicsDiv.appendChild(element);
 
         UIDrawer.topicIndex = 0;
         UIDrawer.drawTopics(Model.contentionsMap.get("root"), 0);
@@ -148,7 +146,7 @@
         Controller.cutContentionList.forEach(function (contentionId) {
             Controller.setContentionBorderType(contentionId, true);
         });
-        
+        checkWindowSize()
     }
 
     static recursiveAddRawToDom(contention: Contention, contentionsDiv, rawElementIdList: string[]) {
