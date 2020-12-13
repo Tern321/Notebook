@@ -31,7 +31,6 @@ function enableInput() {
     });
     checkWindowSize();
     window.addEventListener('resize', checkWindowSize);
-    //setTimeout(function () { window.addEventListener('resize', checkWindowSize); }, 50);
 }
 function checkWindowSize() {
     var smallWindow = false;
@@ -52,20 +51,10 @@ function checkWindowSize() {
         uiElement.style.position = "fixed";
         topicsElement.style.position = "fixed";
     }
-    console.log(window.innerHeight);
-    //1196 x 659
-    //var topicsElement = document.getElementById("topics");
-    //if (window.innerWidth < 600) {
-    //    uiElement.style.position = "relative";
-    //}
-    //else {
-    //    uiElement.style.position = "fixed";
-    //}
-    //console.log(window.innerWidth + "  " + window.innerHeight);
 }
 function keyUp(event) {
     if (event.keyCode == 16) {
-        Controller.saveContentionOrder();
+        ActionsController.saveContentionOrder();
         //console.log("shift up");
     }
     //console.log("ctrlKey:" + event.ctrlKey + " shiftKey:" + event.shiftKey + " altKey:" + event.altKey + " keyCode:" + event.keyCode);
@@ -169,7 +158,7 @@ function mouseClick(e) {
                             ActionsController.moveContention(contentionElement.getAttribute("id"));
                         }
                         else if (universalCtrlPressed(e)) {
-                            Controller.moveToTopic(e, contentionElement.getAttribute("id"));
+                            ActionsController.moveToTopic(e, contentionElement.getAttribute("id"));
                         }
                         else {
                             ActionsController.selectContention(contentionElement);

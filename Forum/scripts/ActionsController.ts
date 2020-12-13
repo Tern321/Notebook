@@ -17,13 +17,13 @@
         var testParents = Controller.selectedcontention();
         if (Model.contentionForId(targetContentionId).parentContentionId == Controller.selectedContentionId) {
             //console.log("moveContentionToTop");
-            Model.moveContentionToTop(Model.contentionForId(targetContentionId));
+            Model.moveContentionToTop(targetContentionId);
 
             //console.log("moveContention");
             var archiveContentionId = Model.archiveIdForContention(Controller.selectedContentionId);
 
             if (Model.contentionsMap.has(archiveContentionId)) {
-                Model.moveContentionToTop(Model.contentionForId(archiveContentionId));
+                Model.moveContentionToTop(archiveContentionId);
                 //console.log("parent contains archive");
             }
 
@@ -114,21 +114,16 @@
         var index = parentContention.childs().indexOf(Controller.selectedContentionId);
         if (up) {
             if (index > 0) {
-                // UIDrawer.switchElements
                 var secondElementId = parentContention.childs()[index - 1];
                 UIDrawer.switchElements(document.getElementById(Controller.selectedContentionId), document.getElementById(secondElementId));
-
-                parentContention.childs()[index] = secondElementId;
-                parentContention.childs()[index - 1] = Controller.selectedContentionId;
+                Model.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id);
             }
         }
         else {
             if (index < parentContention.childs().length - 1) {
                 var secondElementId = parentContention.childs()[index + 1];
                 UIDrawer.switchElements(document.getElementById(secondElementId), document.getElementById(Controller.selectedContentionId));
-
-                parentContention.childs()[index] = secondElementId;
-                parentContention.childs()[index + 1] = Controller.selectedContentionId;
+                Model.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id,);
             }
         }
     }
@@ -139,7 +134,7 @@
         var contention = Controller.selectedcontention();
         var parentContentionId = contention.parentContentionId;
         var text = "Link (" + contention.text + ")";
-        Model.addContention(text, contention.url, contention.parentContentionId, Model.generateRandomId(), contention.id)
+        Model.addContention(Model.generateRandomId(), contention.parentContentionId, text, contention.url, contention.id)
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -276,9 +271,9 @@
         var textArea: any = Controller.argumentTextArea();
         textArea.value = selectedcontention.text;
     }
+
     static changeContentionColor(color: string) {
-        var selectedcontention: Contention = Controller.selectedcontention();
-        selectedcontention.color = color;
+        Model.changeContentionColor(Controller.selectedContentionId, color);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -299,23 +294,22 @@
         UIDrawer.drawUI();
     }
     static collapceContention(contentionId: string) {
-        var cn: Contention = Model.contentionsMap.get(contentionId);
-        cn.collapce = !cn.collapce;
+        Model.collapseContention(contentionId, !Model.contentionForId(contentionId).collapce);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
+
     static collapceSelectedContention() {
-        var cn: Contention = Controller.selectedcontention();
-        cn.collapce = !cn.collapce;
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
+        ActionsController.collapceContention(Controller.selectedContentionId);
     }
+
     static addSelectedToArchive() {
         this.addToArchive(Controller.selectedContentionId);
     }
+    
     static addToArchive(contentionId: string) {
         var cn: Contention = Model.contentionsMap.get(contentionId);
-        var archiveContention = Model.archiveForContention(cn.parentContention());
+        var archiveContention = Model.archiveForContention(cn.parentContentionId);
         Model.moveContention(cn.id, archiveContention.id);
 
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
@@ -323,18 +317,10 @@
     }
 
     // topic
-    static createTopicFromContention() {
-        var selectedcontention: Contention = Controller.selectedcontention();
-
-        selectedcontention.collapce = true;
-        selectedcontention.topic = !selectedcontention.topic;
-        Model.childTopicsMap.set(selectedcontention.id, []);
-        Model.updateTopics();
-
+    static createTopicFromContention()
+    {
+        Model.createTopicFromContention(Controller.selectedContentionId, !Controller.selectedcontention().topic);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        if (selectedcontention.topic) {
-            //Controller.topicId = selectedcontention.id;
-        }
         UIDrawer.drawUI();
     }
 
@@ -353,7 +339,7 @@
                 reader.onload = function () {
                     console.log(reader.result);
                     Controller.importJson(reader.result.toString());
-                    //Controller.saveUpdatedData();
+                    UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
                     UIDrawer.drawUI();
                 };
 
@@ -372,6 +358,20 @@
         var json = JSON.stringify(list);
         download(Controller.selectedcontention().text + Date.now() + ".json", json);
     }
+    // other
+    static moveToTopic(event: any, topicId: string) { // refactor to show all property
+        Controller.showAllEnabled = event.ctrlKey || event.metaKey;
 
+        Controller.topicId = topicId;
+        localStorage.setItem("topic", Controller.topicId);
+        UIDrawer.drawUI();
+    }
+    static saveContentionOrder() {
+        if (Controller.shouldSaveContentionOrder) {
+            Controller.shouldSaveContentionOrder = false;
 
+            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
+            UIDrawer.drawUI();
+        }
+    }
 }

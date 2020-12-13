@@ -1,17 +1,8 @@
 class Controller {
+    // getters and setters
     static selectedcontention() {
         return Model.contentionsMap.get(Controller.selectedContentionId);
     }
-    static moveToTopic(event, topicId) {
-        Controller.showAllEnabled = event.ctrlKey || event.metaKey;
-        Controller.topicId = topicId;
-        localStorage.setItem("topic", Controller.topicId);
-        UIDrawer.drawUI();
-    }
-    //static viewAll() {
-    //    Controller.topicId = "root";
-    //    UIDrawer.drawUI();
-    //}
     static getTextAreaValue(id) {
         var textArea = document.getElementById(id);
         return textArea.value;
@@ -23,86 +14,10 @@ class Controller {
     static getEncriptionKey() {
         return this.getTextAreaValue("encriptionKeyTextArea").trim();
     }
-    static contentionIsVisible(contentionId) {
-        return document.getElementById(contentionId) != undefined;
-    }
-    static reload() {
-        const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
-        var login = this.getTextAreaValue("loginTextArea").trim();
-        var encriptionKey = this.getTextAreaValue("encriptionKeyTextArea").trim();
-        if (login.length > 0) {
-            var hash = Math.abs(hashCode(login));
-            localStorage.setItem("login", login);
-            localStorage.setItem("encriptionKey", encriptionKey);
-            Network.sendRequest(Network.loadJsonUrl(login)).then(responseString => {
-                Model.decriptJson(responseString, Controller.getEncriptionKey());
-            }).catch(function (body) {
-                console.log("loadJson error");
-                Model.parseJson("");
-            });
-        }
-        else {
-            console.log("load default data");
-            Model.parseJson("");
-            //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/1544803905.json";
-            //Network.loadJson("instruction url");
-        }
-    }
-    static saveContentionOrder() {
-        if (Controller.shouldSaveContentionOrder) {
-            this.shouldSaveContentionOrder = false;
-            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-            UIDrawer.drawUI();
-        }
-    }
-    static importJson(json) {
-        console.log("importJson " + json);
-        var idChangeMap = new Map();
-        var objectsList = JSON.parse(json);
-        // fill contentionsMap and contentionsList with real objects
-        for (var i = 0; i < objectsList.length; i++) {
-            var obj = objectsList[i];
-            var id = obj.id.toString();
-            if (Model.contentionsMap.has(id)) {
-                var oldId = id;
-                id = Model.generateRandomId();
-                idChangeMap.set(oldId, id);
-                //console.log(" change id to " + cn.id);
-            }
-            var cn = new Contention(id, obj.topic);
-            //console.log("add object " + cn.id + " text " + obj.text +" parent id "+ cn.parentContentionId);
-            cn.parentContentionId = obj.parentContentionId.toString();
-            if (i == 0) {
-                cn.parentContentionId = Controller.selectedContentionId;
-            }
-            else {
-                if (idChangeMap.has(cn.parentContentionId)) {
-                    cn.parentContentionId = idChangeMap.get(cn.parentContentionId);
-                    //console.log(" change parent id to " + cn.parentContentionId);
-                }
-            }
-            if (cn.parentContention()) { // wtf
-                cn.parentContention().childs().push(cn.id);
-            }
-            cn.text = obj.text;
-            cn.color = obj.color;
-            cn.collapce = obj.collapce ? true : false;
-            cn.topic = obj.topic ? true : false;
-            if (cn.topic) {
-                cn.parentTopic().childTopics().push(cn.id);
-            }
-            Model.contentionsMap.set(cn.id, cn);
-        }
-    }
     static argumentTextArea() {
         return document.getElementById("argumentTextArea");
     }
-    static cleanTextArea() {
-        Controller.argumentTextArea().text = "";
-    }
-    static removeTextAreaFocus() {
-        Controller.argumentTextArea().blur();
-    }
+    // files
     static addFile(ev) {
         if (!Controller.selectedContentionId) {
             Controller.selectedContentionId = Controller.topicId;
@@ -144,6 +59,39 @@ class Controller {
         console.log(ev);
         ev.preventDefault();
     }
+    // import
+    static importJson(json) {
+        //console.log("importJson " + json);
+        // use this to fix problem with id collision
+        var idChangeMap = new Map();
+        var objectsList = JSON.parse(json);
+        for (var i = 0; i < objectsList.length; i++) {
+            var obj = objectsList[i];
+            var id = obj.id.toString();
+            if (Model.contentionsMap.has(id)) {
+                var oldId = id;
+                id = Model.generateRandomId();
+                idChangeMap.set(oldId, id);
+                //console.log(" change id to " + cn.id);
+            }
+            var parentContentionId = obj.parentContentionId.toString();
+            if (i == 0) {
+                parentContentionId = Controller.selectedContentionId;
+            }
+            else {
+                if (idChangeMap.has(parentContentionId)) {
+                    parentContentionId = idChangeMap.get(parentContentionId);
+                }
+            }
+            Model.addContention(id, parentContentionId, obj.text, obj.url, obj.linkId);
+            Model.changeContentionColor(id, obj.color);
+            if (obj.topic) {
+                Model.createTopicFromContention(id, obj.topic);
+            }
+            Model.collapseContention(id, obj.collapce);
+        }
+    }
+    // logic
     static textAreasHasFocus() {
         if (Controller.argumentTextArea().matches(":focus")) {
             return true;
@@ -156,17 +104,49 @@ class Controller {
         }
         return false;
     }
-    static setContentionBorderType(id, dashed) {
-        var element = document.getElementById(id);
-        if (element != undefined) {
-            UIDrawer.setElementBorderType(element, dashed);
-        }
+    static contentionIsVisible(contentionId) {
+        return document.getElementById(contentionId) != undefined;
+    }
+    static cleanTextArea() {
+        Controller.argumentTextArea().text = "";
+    }
+    static removeTextAreaFocus() {
+        Controller.argumentTextArea().blur();
     }
     static cleanCutContentionList() {
         Controller.cutContentionList.forEach(function (contentionId) {
             Controller.setContentionBorderType(contentionId, false);
         });
         Controller.cutContentionList = [];
+    }
+    static setContentionBorderType(id, dashed) {
+        var element = document.getElementById(id);
+        if (element != undefined) {
+            UIDrawer.setElementBorderType(element, dashed);
+        }
+    }
+    // actions
+    static reload() {
+        const hashCode = s => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
+        var login = this.getTextAreaValue("loginTextArea").trim();
+        var encriptionKey = this.getTextAreaValue("encriptionKeyTextArea").trim();
+        if (login.length > 0) {
+            var hash = Math.abs(hashCode(login));
+            localStorage.setItem("login", login);
+            localStorage.setItem("encriptionKey", encriptionKey);
+            Network.sendRequest(Network.loadJsonUrl(login)).then(responseString => {
+                Model.decriptJson(responseString, Controller.getEncriptionKey());
+            }).catch(function (body) {
+                console.log("loadJson error");
+                Model.parseJson("");
+            });
+        }
+        else {
+            console.log("load default data");
+            Model.parseJson("");
+            //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/1544803905.json";
+            //Network.loadJson("instruction url");
+        }
     }
 }
 Controller.topicId = "root";

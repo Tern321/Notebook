@@ -69,7 +69,7 @@ function checkWindowSize() {
 function keyUp(event) {
     if (event.keyCode == 16)
     {
-        Controller.saveContentionOrder()
+        ActionsController.saveContentionOrder()
         //console.log("shift up");
     }
     //console.log("ctrlKey:" + event.ctrlKey + " shiftKey:" + event.shiftKey + " altKey:" + event.altKey + " keyCode:" + event.keyCode);
@@ -189,7 +189,7 @@ function mouseClick(e) {
                             ActionsController.moveContention(contentionElement.getAttribute("id"));
                         }
                         else if (universalCtrlPressed(e)) {
-                            Controller.moveToTopic(e, contentionElement.getAttribute("id"));
+                            ActionsController.moveToTopic(e, contentionElement.getAttribute("id"));
                         }
                         else {
                             ActionsController.selectContention(contentionElement);

@@ -1,4 +1,12 @@
 class Model {
+    // getters
+    static contentionForId(contentionId) {
+        return Model.contentionsMap.get(contentionId);
+    }
+    static rootContention() {
+        return Model.contentionsMap.get("root");
+    }
+    // logic
     static decriptJson(jsonText, password) {
         var data = JSON.parse(jsonText);
         //console.log(data.version);
@@ -102,57 +110,6 @@ class Model {
             });
         }
     }
-    static removeContention(id) {
-        var cn = Model.contentionForId(id);
-        var parentTopic = cn.parentTopic();
-        var parentContention = cn.parentContention();
-        var index = parentContention.childs().indexOf(id);
-        if (index > -1) {
-            parentContention.childs().splice(index, 1);
-        }
-        cn.parentContentionId = "-1";
-        Model.contentionsMap.delete(id);
-        Model.updateTopics();
-    }
-    static moveContention(id, toId) {
-        var cn = Model.contentionForId(id);
-        var parentTopic = cn.parentTopic();
-        Model.removeContention(id);
-        Model.updateTopics();
-        Model.contentionForId(toId).childs().push(cn.id);
-        Model.contentionsMap.set(cn.id, cn);
-        cn.parentContentionId = toId;
-        Model.updateTopics();
-    }
-    static addContentionWithLinkId(text, parentId, id, linkId) {
-        this.addContention(text, undefined, parentId, id, linkId);
-    }
-    static addContentionWithId(text, parentId, id) {
-        this.addContention(text, undefined, parentId, id, undefined);
-    }
-    static addContention(text, url, parentId, id, linkId) {
-        text = text.trim();
-        if (text.length > 0 || url.length > 0) {
-            var parentContention = Model.contentionForId(parentId);
-            if (parentContention.linkId != undefined) {
-                parentId = parentContention.linkId;
-            }
-            //console.log("addContentionWithId " + id);
-            var cn = new Contention(id, false);
-            cn.text = text;
-            cn.parentContentionId = parentId;
-            cn.url = url;
-            cn.linkId = linkId;
-            Model.contentionsMap.set(cn.id, cn);
-            Model.contentionForId(parentId).childs().push(cn.id);
-        }
-    }
-    static addUrl(text, url, parentId) {
-        this.addContention(text, url, parentId, Model.generateRandomId(), undefined);
-    }
-    static addContentionWithText(text, parentId) {
-        this.addContentionWithId(text, parentId, Model.generateRandomId());
-    }
     static generateRandomId() {
         var id;
         do {
@@ -160,27 +117,70 @@ class Model {
         } while (Model.contentionsMap.has(id));
         return id;
     }
-    static contentionForId(id) {
-        return Model.contentionsMap.get(id);
+    // sugar
+    static addContentionWithLinkId(text, parentId, id, linkId) {
+        this.addContention(id, parentId, text, undefined, linkId);
     }
-    static rootContention() {
-        return Model.contentionsMap.get("root");
+    static addContentionWithId(text, parentId, id) {
+        this.addContention(id, parentId, text, undefined, undefined);
+    }
+    static addUrl(text, url, parentId) {
+        this.addContention(Model.generateRandomId(), parentId, text, url, undefined);
+    }
+    static addContentionWithText(text, parentId) {
+        this.addContentionWithId(text, parentId, Model.generateRandomId());
     }
     static archiveIdForContention(contentionId) {
         var archiveId = "archive_" + contentionId;
         return archiveId;
     }
-    static archiveForContention(cn) {
+    static archiveForContention(contentionId) {
+        var cn = Model.contentionForId(contentionId);
         var archiveId = this.archiveIdForContention(cn.id);
         if (!Model.contentionsMap.has(archiveId)) {
             Model.addContentionWithId("(" + cn.text + ")", cn.id, archiveId);
             Model.contentionForId(archiveId).collapce = true;
         }
         var archiveContention = Model.contentionForId(archiveId);
-        Model.moveContentionToTop(archiveContention);
+        Model.moveContentionToTop(archiveId);
         return archiveContention;
     }
-    static moveContentionToTop(cn) {
+    static executeCommand(command) {
+        switch (command.task) {
+            case 'moveContentionToTop':
+                Model.moveContentionToTop(command.contentionId);
+                break;
+            case 'archiveForContention':
+                Model.archiveForContention(command.contentionId);
+                break;
+            case 'removeContention':
+                Model.removeContention(command.contentionId);
+                break;
+            case 'moveContention':
+                Model.moveContention(command.contentionId, command.targetId);
+                break;
+            case 'collapseContention':
+                Model.collapseContention(command.contentionId, command.collapse);
+                break;
+            case 'changeContentionColor':
+                Model.changeContentionColor(command.contentionId, command.color);
+                break;
+            case 'createTopicFromContention':
+                Model.createTopicFromContention(command.contentionId, command.topic);
+                break;
+            case 'addContention':
+                Model.addContention(command.contentionId, command.parentContentionId, command.text, command.url, command.linkId);
+                break;
+            case 'switchContentionsOrder':
+                Model.switchContentionsOrder(command.contentionId, command.secondElementId, command.parentContentionId);
+                break;
+            default:
+                console.log("executeCommand error, command not found");
+        }
+    }
+    // command tasks
+    static moveContentionToTop(contentionId) {
+        var cn = Model.contentionForId(contentionId);
         var parentContention = cn.parentContention();
         var index = parentContention.childs().indexOf(cn.id);
         if (index > -1) {
@@ -188,85 +188,70 @@ class Model {
         }
         cn.parentContention().childs().unshift(cn.id);
     }
+    static removeContention(contentionId) {
+        var cn = Model.contentionForId(contentionId);
+        var parentTopic = cn.parentTopic();
+        var parentContention = cn.parentContention();
+        var index = parentContention.childs().indexOf(contentionId);
+        if (index > -1) {
+            parentContention.childs().splice(index, 1);
+        }
+        cn.parentContentionId = "-1";
+        Model.contentionsMap.delete(contentionId);
+        Model.updateTopics();
+    }
+    static moveContention(contentionId, targetId) {
+        Model.removeContention(contentionId);
+        Model.contentionForId(targetId).childs().push(contentionId);
+        var contention = Model.contentionForId(contentionId);
+        Model.contentionsMap.set(contentionId, contention);
+        contention.parentContentionId = targetId;
+        Model.updateTopics();
+    }
+    static collapseContention(contentionId, collapse) {
+        var cn = Model.contentionsMap.get(contentionId);
+        cn.collapce = collapse;
+    }
+    static changeContentionColor(contentionId, color) {
+        Model.contentionForId(contentionId).color = color;
+    }
+    static createTopicFromContention(contentionId, topic) {
+        var selectedcontention = Model.contentionForId(contentionId);
+        selectedcontention.topic = topic;
+        Model.childTopicsMap.set(selectedcontention.id, []);
+        Model.updateTopics();
+    }
+    static addContention(contentionId, parentContentionId, text, url, linkId) {
+        text = text.trim();
+        if (text.length > 0 || url.length > 0) {
+            var parentContention = Model.contentionForId(parentContentionId);
+            if (parentContention.linkId != undefined) {
+                parentContentionId = parentContention.linkId;
+            }
+            //console.log("addContentionWithId " + id);
+            var cn = new Contention(contentionId, false);
+            cn.text = text;
+            cn.parentContentionId = parentContentionId;
+            cn.url = url;
+            cn.linkId = linkId;
+            Model.contentionsMap.set(cn.id, cn);
+            Model.contentionForId(parentContentionId).childs().push(cn.id);
+        }
+    }
+    static switchContentionsOrder(contentionId, secondElementId, parentContentionId) {
+        var parentContention = Model.contentionForId(parentContentionId);
+        var indexA = parentContention.childs().indexOf(contentionId);
+        var indexB = parentContention.childs().indexOf(secondElementId);
+        if (indexA > -1 && indexB > -1) {
+            parentContention.childs()[indexA] = secondElementId;
+            parentContention.childs()[indexB] = contentionId;
+        }
+    }
 }
 Model.contentionsMap = new Map();
 Model.childContentionMap = new Map();
 Model.childTopicsMap = new Map();
-class Contention {
-    constructor(id, topic) {
-        this.color = "#FFF";
-        this.collapce = false;
-        this.topic = false;
-        this.id = id;
-        Model.childContentionMap.set(this.id, []);
-        if (topic) {
-            Model.childTopicsMap.set(this.id, []);
-        }
-    }
-    parentContention() {
-        return Model.contentionsMap.get(this.parentContentionId);
-    }
-    parentTopic() {
-        var parentContention = this.parentContention();
-        while (parentContention && !parentContention.topic) {
-            parentContention = parentContention.parentContention();
-        }
-        return parentContention;
-    }
-    recursiveAddChilds(list) {
-        list.push(this);
-        if (this.linkId == undefined) {
-            this.childs().forEach(function (childContentionId) {
-                var childContention = Model.contentionForId(childContentionId);
-                childContention.recursiveAddChilds(list);
-            });
-        }
-    }
-    updateText(text) {
-        this.text = text;
-        this.width = undefined;
-    }
-    childs() {
-        if (this.linkId == undefined) {
-            return Model.childContentionMap.get(this.id);
-        }
-        else {
-            return Model.childContentionMap.get(this.linkId);
-        }
-    }
-    childTopics() {
-        return Model.childTopicsMap.get(this.id);
-    }
-    indexInParentContention() {
-        var parentContention = this.parentContention();
-        console.log("indexInParentContention");
-        console.log("contention");
-        console.log(this);
-        console.log("parent");
-        console.log(parentContention);
-        console.log("search for " + this.id);
-        console.log("childs " + parentContention.childs());
-        if (!parentContention) {
-            return -1;
-        }
-        return parentContention.childs().indexOf(this.id);
-    }
-    nextOrDefault() {
-        var parentContention = this.parentContention();
-        var index = this.indexInParentContention() + 1;
-        if (index < parentContention.childs().length) {
-            return Model.contentionForId(parentContention.childs()[index]);
-        }
-        return;
-    }
-    previosOrDefault() {
-        var parentContention = this.parentContention();
-        var index = this.indexInParentContention() - 1;
-        if (index >= 0) {
-            return Model.contentionForId(parentContention.childs()[index]);
-        }
-        return;
-    }
+class Command {
 }
 class SerializedData {
 }

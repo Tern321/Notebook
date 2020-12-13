@@ -13,11 +13,11 @@ class ActionsController {
         var testParents = Controller.selectedcontention();
         if (Model.contentionForId(targetContentionId).parentContentionId == Controller.selectedContentionId) {
             //console.log("moveContentionToTop");
-            Model.moveContentionToTop(Model.contentionForId(targetContentionId));
+            Model.moveContentionToTop(targetContentionId);
             //console.log("moveContention");
             var archiveContentionId = Model.archiveIdForContention(Controller.selectedContentionId);
             if (Model.contentionsMap.has(archiveContentionId)) {
-                Model.moveContentionToTop(Model.contentionForId(archiveContentionId));
+                Model.moveContentionToTop(archiveContentionId);
                 //console.log("parent contains archive");
             }
         }
@@ -109,16 +109,18 @@ class ActionsController {
                 // UIDrawer.switchElements
                 var secondElementId = parentContention.childs()[index - 1];
                 UIDrawer.switchElements(document.getElementById(Controller.selectedContentionId), document.getElementById(secondElementId));
-                parentContention.childs()[index] = secondElementId;
-                parentContention.childs()[index - 1] = Controller.selectedContentionId;
+                Model.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id);
+                //parentContention.childs()[index] = secondElementId;
+                //parentContention.childs()[index - 1] = Controller.selectedContentionId;
             }
         }
         else {
             if (index < parentContention.childs().length - 1) {
                 var secondElementId = parentContention.childs()[index + 1];
                 UIDrawer.switchElements(document.getElementById(secondElementId), document.getElementById(Controller.selectedContentionId));
-                parentContention.childs()[index] = secondElementId;
-                parentContention.childs()[index + 1] = Controller.selectedContentionId;
+                Model.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id);
+                //parentContention.childs()[index] = secondElementId;
+                //parentContention.childs()[index + 1] = Controller.selectedContentionId;
             }
         }
     }
@@ -127,7 +129,7 @@ class ActionsController {
         var contention = Controller.selectedcontention();
         var parentContentionId = contention.parentContentionId;
         var text = "Link (" + contention.text + ")";
-        Model.addContention(text, contention.url, contention.parentContentionId, Model.generateRandomId(), contention.id);
+        Model.addContention(Model.generateRandomId(), contention.parentContentionId, text, contention.url, contention.id);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -245,8 +247,7 @@ class ActionsController {
         textArea.value = selectedcontention.text;
     }
     static changeContentionColor(color) {
-        var selectedcontention = Controller.selectedcontention();
-        selectedcontention.color = color;
+        Model.changeContentionColor(Controller.selectedContentionId, color);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -265,38 +266,28 @@ class ActionsController {
         UIDrawer.drawUI();
     }
     static collapceContention(contentionId) {
-        var cn = Model.contentionsMap.get(contentionId);
-        cn.collapce = !cn.collapce;
+        var contention = Model.contentionForId(contentionId);
+        Model.collapseContention(contentionId, !contention.collapce);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static collapceSelectedContention() {
-        var cn = Controller.selectedcontention();
-        cn.collapce = !cn.collapce;
-        UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        UIDrawer.drawUI();
+        ActionsController.collapceContention(Controller.selectedContentionId);
     }
     static addSelectedToArchive() {
         this.addToArchive(Controller.selectedContentionId);
     }
     static addToArchive(contentionId) {
         var cn = Model.contentionsMap.get(contentionId);
-        var archiveContention = Model.archiveForContention(cn.parentContention());
+        var archiveContention = Model.archiveForContention(cn.parentContentionId);
         Model.moveContention(cn.id, archiveContention.id);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     // topic
     static createTopicFromContention() {
-        var selectedcontention = Controller.selectedcontention();
-        selectedcontention.collapce = true;
-        selectedcontention.topic = !selectedcontention.topic;
-        Model.childTopicsMap.set(selectedcontention.id, []);
-        Model.updateTopics();
+        Model.createTopicFromContention(Controller.selectedContentionId, !Controller.selectedcontention().topic);
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        if (selectedcontention.topic) {
-            //Controller.topicId = selectedcontention.id;
-        }
         UIDrawer.drawUI();
     }
     static import() {
@@ -310,7 +301,7 @@ class ActionsController {
                 reader.onload = function () {
                     console.log(reader.result);
                     Controller.importJson(reader.result.toString());
-                    //Controller.saveUpdatedData();
+                    UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
                     UIDrawer.drawUI();
                 };
                 reader.readAsText(file);
@@ -327,6 +318,20 @@ class ActionsController {
         Controller.selectedcontention().recursiveAddChilds(list);
         var json = JSON.stringify(list);
         download(Controller.selectedcontention().text + Date.now() + ".json", json);
+    }
+    // other
+    static moveToTopic(event, topicId) {
+        Controller.showAllEnabled = event.ctrlKey || event.metaKey;
+        Controller.topicId = topicId;
+        localStorage.setItem("topic", Controller.topicId);
+        UIDrawer.drawUI();
+    }
+    static saveContentionOrder() {
+        if (Controller.shouldSaveContentionOrder) {
+            Controller.shouldSaveContentionOrder = false;
+            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
+            UIDrawer.drawUI();
+        }
     }
 }
 //# sourceMappingURL=ActionsController.js.map
