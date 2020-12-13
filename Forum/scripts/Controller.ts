@@ -107,12 +107,15 @@ class Controller {
                 }
             }
 
-            Model.addContention(id, parentContentionId, obj.text, obj.url, obj.linkId);
-            Model.changeContentionColor(id, obj.color);
+            Controller.executeCommand(Command.addContention(id, parentContentionId, obj.text, obj.url, obj.linkId));
+            Controller.executeCommand(Command.changeContentionColor(id, obj.color));
             if (obj.topic) {
-                Model.createTopicFromContention(id, obj.topic);
+                Controller.executeCommand(Command.createTopicFromContention(id, obj.topic));
             }
-            Model.collapseContention(id, obj.collapce);
+            if (obj.collapce) {
+                Controller.executeCommand(Command.collapseContention(id, obj.collapce));
+            }
+            
         }
     }
     // logic
@@ -173,7 +176,9 @@ class Controller {
         }
     }
 
-
+    static executeCommand(command: Command) {
+        Model.executeCommand(command);
+    }
 
 }
 

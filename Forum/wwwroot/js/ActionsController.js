@@ -13,11 +13,11 @@ class ActionsController {
         var testParents = Controller.selectedcontention();
         if (Model.contentionForId(targetContentionId).parentContentionId == Controller.selectedContentionId) {
             //console.log("moveContentionToTop");
-            Model.moveContentionToTop(targetContentionId);
+            Controller.executeCommand(Command.moveContentionToTop(targetContentionId));
             //console.log("moveContention");
             var archiveContentionId = Model.archiveIdForContention(Controller.selectedContentionId);
             if (Model.contentionsMap.has(archiveContentionId)) {
-                Model.moveContentionToTop(archiveContentionId);
+                Controller.executeCommand(Command.moveContentionToTop(archiveContentionId));
                 //console.log("parent contains archive");
             }
         }
@@ -30,7 +30,7 @@ class ActionsController {
                 }
                 testParents = testParents.parentContention();
             }
-            Model.moveContention(targetContentionId, Controller.selectedcontention().id);
+            Controller.executeCommand(Command.moveContention(targetContentionId, Controller.selectedcontention().id));
         }
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
@@ -106,21 +106,16 @@ class ActionsController {
         var index = parentContention.childs().indexOf(Controller.selectedContentionId);
         if (up) {
             if (index > 0) {
-                // UIDrawer.switchElements
                 var secondElementId = parentContention.childs()[index - 1];
                 UIDrawer.switchElements(document.getElementById(Controller.selectedContentionId), document.getElementById(secondElementId));
-                Model.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id);
-                //parentContention.childs()[index] = secondElementId;
-                //parentContention.childs()[index - 1] = Controller.selectedContentionId;
+                Controller.executeCommand(Command.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id));
             }
         }
         else {
             if (index < parentContention.childs().length - 1) {
                 var secondElementId = parentContention.childs()[index + 1];
                 UIDrawer.switchElements(document.getElementById(secondElementId), document.getElementById(Controller.selectedContentionId));
-                Model.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id);
-                //parentContention.childs()[index] = secondElementId;
-                //parentContention.childs()[index + 1] = Controller.selectedContentionId;
+                Controller.executeCommand(Command.switchContentionsOrder(Controller.selectedContentionId, secondElementId, parentContention.id));
             }
         }
     }
@@ -129,7 +124,7 @@ class ActionsController {
         var contention = Controller.selectedcontention();
         var parentContentionId = contention.parentContentionId;
         var text = "Link (" + contention.text + ")";
-        Model.addContention(Model.generateRandomId(), contention.parentContentionId, text, contention.url, contention.id);
+        Controller.executeCommand(Command.addContention(Model.generateRandomId(), contention.parentContentionId, text, contention.url, contention.id));
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -148,7 +143,7 @@ class ActionsController {
             Controller.selectedContentionId = Controller.topicId;
         }
         var textArea = Controller.argumentTextArea();
-        Model.addContentionWithText(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
+        ActionsController.addContentionWithText(textArea.value.split("\n").join("<br>"), Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
@@ -182,7 +177,7 @@ class ActionsController {
     static addContentionCtrlV() {
         if (Controller.cutContentionList.length > 0) {
             Controller.cutContentionList.forEach(function (contentionId) {
-                Model.moveContention(contentionId, Controller.selectedContentionId);
+                Controller.executeCommand(Command.moveContention(contentionId, Controller.selectedContentionId));
             });
             Controller.cleanCutContentionList();
             UIDrawer.drawUI();
@@ -202,10 +197,10 @@ class ActionsController {
         var textArea = Controller.argumentTextArea();
         textArea.value.split(/\r?\n/).forEach(function (line) {
             if (line.startsWith("http")) {
-                Model.addUrl("", line, Controller.selectedContentionId);
+                ActionsController.addUrlTask("", line, Controller.selectedContentionId);
             }
             else {
-                Model.addContentionWithText(line, Controller.selectedContentionId);
+                ActionsController.addContentionWithText(line, Controller.selectedContentionId);
             }
         });
         textArea.value = "";
@@ -222,11 +217,25 @@ class ActionsController {
         var lines = text.split(/\r?\n/);
         text = text.substring(lines[0].length);
         text = text.replace("\r", "").trim().split("\n").join("<br>").trim();
-        Model.addUrl(text, lines[0], Controller.selectedContentionId);
+        ActionsController.addUrlTask(text, lines[0], Controller.selectedContentionId);
         textArea.value = "";
         textArea.focus();
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
+    }
+    static addContentionWithText(text, parentId) {
+        this.addContentionWithId(text, parentId, Model.generateRandomId());
+    }
+    static archiveForContention(contentionId) {
+        var cn = Model.contentionForId(contentionId);
+        var archiveId = Model.archiveIdForContention(cn.id);
+        if (!Model.contentionsMap.has(archiveId)) {
+            ActionsController.addContentionWithId("(" + cn.text + ")", cn.id, archiveId);
+            Model.contentionForId(archiveId).collapce = true;
+        }
+        var archiveContention = Model.contentionForId(archiveId);
+        Controller.executeCommand(Command.moveContentionToTop(archiveId));
+        return archiveContention;
     }
     // change
     static changeContention() {
@@ -247,7 +256,7 @@ class ActionsController {
         textArea.value = selectedcontention.text;
     }
     static changeContentionColor(color) {
-        Model.changeContentionColor(Controller.selectedContentionId, color);
+        Controller.executeCommand(Command.changeContentionColor(Controller.selectedContentionId, color));
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -261,13 +270,12 @@ class ActionsController {
         else {
             this.selectContentionById(nextContention.id);
         }
-        Model.removeContention(contentionId);
+        Controller.executeCommand(Command.removeContention(contentionId));
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     static collapceContention(contentionId) {
-        var contention = Model.contentionForId(contentionId);
-        Model.collapseContention(contentionId, !contention.collapce);
+        Controller.executeCommand(Command.collapseContention(contentionId, !Model.contentionForId(contentionId).collapce));
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -279,14 +287,14 @@ class ActionsController {
     }
     static addToArchive(contentionId) {
         var cn = Model.contentionsMap.get(contentionId);
-        var archiveContention = Model.archiveForContention(cn.parentContentionId);
-        Model.moveContention(cn.id, archiveContention.id);
+        var archiveContention = ActionsController.archiveForContention(cn.parentContentionId);
+        Controller.executeCommand(Command.moveContention(cn.id, archiveContention.id));
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
     // topic
     static createTopicFromContention() {
-        Model.createTopicFromContention(Controller.selectedContentionId, !Controller.selectedcontention().topic);
+        Controller.executeCommand(Command.createTopicFromContention(Controller.selectedContentionId, !Controller.selectedcontention().topic));
         UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
         UIDrawer.drawUI();
     }
@@ -332,6 +340,16 @@ class ActionsController {
             UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
             UIDrawer.drawUI();
         }
+    }
+    // sugar
+    static addContentionWithLinkId(text, parentId, id, linkId) {
+        Controller.executeCommand(Command.addContention(id, parentId, text, undefined, linkId));
+    }
+    static addContentionWithId(text, parentId, id) {
+        Controller.executeCommand(Command.addContention(id, parentId, text, undefined, undefined));
+    }
+    static addUrlTask(text, url, parentId) {
+        Controller.executeCommand(Command.addContention(Model.generateRandomId(), parentId, text, url, undefined));
     }
 }
 //# sourceMappingURL=ActionsController.js.map

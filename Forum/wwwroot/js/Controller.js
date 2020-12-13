@@ -83,12 +83,14 @@ class Controller {
                     parentContentionId = idChangeMap.get(parentContentionId);
                 }
             }
-            Model.addContention(id, parentContentionId, obj.text, obj.url, obj.linkId);
-            Model.changeContentionColor(id, obj.color);
+            Controller.executeCommand(Command.addContention(id, parentContentionId, obj.text, obj.url, obj.linkId));
+            Controller.executeCommand(Command.changeContentionColor(id, obj.color));
             if (obj.topic) {
-                Model.createTopicFromContention(id, obj.topic);
+                Controller.executeCommand(Command.createTopicFromContention(id, obj.topic));
             }
-            Model.collapseContention(id, obj.collapce);
+            if (obj.collapce) {
+                Controller.executeCommand(Command.collapseContention(id, obj.collapce));
+            }
         }
     }
     // logic
@@ -147,6 +149,9 @@ class Controller {
             //var url = "https://backendlessappcontent.com/4498E4FA-01A9-8E7F-FFC3-073969464300/B416CA2D-2783-4942-A3ED-B132738BE078/files/DataFolder/1544803905.json";
             //Network.loadJson("instruction url");
         }
+    }
+    static executeCommand(command) {
+        Model.executeCommand(command);
     }
 }
 Controller.topicId = "root";

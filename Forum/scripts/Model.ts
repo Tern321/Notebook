@@ -138,49 +138,20 @@
         return id;
     }
 
-    // sugar
-    static addContentionWithLinkId(text: string, parentId: string, id: string, linkId:string) {
-        this.addContention(id, parentId, text, undefined, linkId);
-    }
-
-    static addContentionWithId(text: string, parentId: string, id: string) {
-        this.addContention(id, parentId, text, undefined, undefined);
-    }
-
-    static addUrl(text: string, url: string, parentId: string) {
-        this.addContention(Model.generateRandomId(), parentId, text, url, undefined);
-    }
-
-    static addContentionWithText(text: string, parentId: string) {
-        this.addContentionWithId(text, parentId, Model.generateRandomId());
-    }
+    
 
     static archiveIdForContention(contentionId: string): string {
 
         var archiveId = "archive_" + contentionId;
         return archiveId;
     }
-
-    static archiveForContention(contentionId: string): Contention {
-        var cn: Contention = Model.contentionForId(contentionId);
-        var archiveId = this.archiveIdForContention(cn.id);
-        if (!Model.contentionsMap.has(archiveId)) {
-            Model.addContentionWithId("(" + cn.text + ")", cn.id, archiveId);
-            Model.contentionForId(archiveId).collapce = true;
-        }
-        var archiveContention = Model.contentionForId(archiveId);
-        Model.moveContentionToTop(archiveId);
-        return archiveContention;
-    }
+   
 
 
     static executeCommand(command: Command) {
         switch (command.task) {
             case 'moveContentionToTop':
                 Model.moveContentionToTop(command.contentionId);
-                break;
-            case 'archiveForContention':
-                Model.archiveForContention(command.contentionId);
                 break;
             case 'removeContention':
                 Model.removeContention(command.contentionId);
@@ -206,7 +177,6 @@
             default:
                 console.log("executeCommand error, command not found");
         }
-
     }
     // command tasks
     static moveContentionToTop(contentionId: string) {
@@ -290,22 +260,6 @@
             parentContention.childs()[indexB] = contentionId;
         }
     }
-}
-
-class Command {
-    task: string;
-    contentionId: string;
-    parentContentionId: string;
-    targetId: string;
-    color: string;
-    text: string;
-    url: string;
-    linkId: string;
-
-    secondElementId: string;
-
-    collapse: boolean;
-    topic: boolean;
 }
 
 class SerializedData {

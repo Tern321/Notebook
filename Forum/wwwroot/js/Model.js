@@ -117,41 +117,14 @@ class Model {
         } while (Model.contentionsMap.has(id));
         return id;
     }
-    // sugar
-    static addContentionWithLinkId(text, parentId, id, linkId) {
-        this.addContention(id, parentId, text, undefined, linkId);
-    }
-    static addContentionWithId(text, parentId, id) {
-        this.addContention(id, parentId, text, undefined, undefined);
-    }
-    static addUrl(text, url, parentId) {
-        this.addContention(Model.generateRandomId(), parentId, text, url, undefined);
-    }
-    static addContentionWithText(text, parentId) {
-        this.addContentionWithId(text, parentId, Model.generateRandomId());
-    }
     static archiveIdForContention(contentionId) {
         var archiveId = "archive_" + contentionId;
         return archiveId;
-    }
-    static archiveForContention(contentionId) {
-        var cn = Model.contentionForId(contentionId);
-        var archiveId = this.archiveIdForContention(cn.id);
-        if (!Model.contentionsMap.has(archiveId)) {
-            Model.addContentionWithId("(" + cn.text + ")", cn.id, archiveId);
-            Model.contentionForId(archiveId).collapce = true;
-        }
-        var archiveContention = Model.contentionForId(archiveId);
-        Model.moveContentionToTop(archiveId);
-        return archiveContention;
     }
     static executeCommand(command) {
         switch (command.task) {
             case 'moveContentionToTop':
                 Model.moveContentionToTop(command.contentionId);
-                break;
-            case 'archiveForContention':
-                Model.archiveForContention(command.contentionId);
                 break;
             case 'removeContention':
                 Model.removeContention(command.contentionId);
@@ -251,8 +224,6 @@ class Model {
 Model.contentionsMap = new Map();
 Model.childContentionMap = new Map();
 Model.childTopicsMap = new Map();
-class Command {
-}
 class SerializedData {
 }
 //# sourceMappingURL=Model.js.map
