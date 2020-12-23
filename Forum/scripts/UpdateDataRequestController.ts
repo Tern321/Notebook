@@ -17,7 +17,6 @@
                 UpdateDataRequestController.lastChangeTime = "-1";
                 console.log("get last update time from server error");
             });
-
     }
     static async setLastChangeTime(url: string, time: number, login: string) {
         //console.log("setLastChangeTime");
@@ -52,7 +51,8 @@
             UpdateDataRequestController.shouldSendUpdateDataRequest = false;
 
             Network.sendRequest(Network.getJsonUpdateTimeUrl(Controller.getTextAreaValue("loginTextArea").trim())).then(lastChangeTime => {
-                if (UpdateDataRequestController.lastChangeTime === lastChangeTime) {
+                if (UpdateDataRequestController.lastChangeTime === lastChangeTime)
+                {
                     UpdateDataRequestController.saveUpdatedData();
                     // update change data with Date.now();
 
@@ -75,9 +75,14 @@
                             alert("Failed to set last update time");
                         });
                 }
-                else {
-                    UpdateDataRequestController.updateDataRequestLock = false;
-                    alert("Reload page to update data");
+                else
+                {
+                    console.log("data out of date, reloading");
+                    // reload data, apply changes, try o save once more
+                    Controller.reload();
+                    
+                    //UpdateDataRequestController.updateDataRequestLock = false;
+                    //alert("Reload page to update data");
 
                 }
             }).catch(function (body) {
@@ -90,7 +95,7 @@
 
     static async checkChangeTimeAndSaveUpdatedData()
     {
-        //console.log("checkChangeTimeAndSaveUpdatedData");
+        console.log("checkChangeTimeAndSaveUpdatedData");
         UpdateDataRequestController.shouldSendUpdateDataRequest = true;
         UpdateDataRequestController.lockCheckChangeTimeAndSaveUpdatedData();
     }
@@ -106,11 +111,11 @@
             Model.rootContention().recursiveAddChilds(list);
 
             var json = JSON.stringify(list);
-            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey());
+            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey(), Controller.commandsList.length);
         }
     }
 
-    static async saveJson(url: string, json: string, loginHash: string, password: string) {
+    static async saveJson(url: string, json: string, loginHash: string, password: string, savedCommandsCount: number) {
         CryptoWarper.encrypt(password, json).then(function (encriptionData: EncriptionData) {
             var data: SerializedData = new SerializedData();
             data.encriptedData = encriptionData;
@@ -139,7 +144,9 @@
             }).then(function (body) { return body.text(); }).then(function (data) {
                 //console.log(data);
                 if (data == "ok") {
-                    //console.log("data saved");
+                    console.log("data saved, clean command list");
+                    Controller.commandsList = Controller.commandsList.slice(savedCommandsCount);
+                    //
                 }
                 else {
                     alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");

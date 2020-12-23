@@ -1,7 +1,7 @@
 ﻿
 /*menuitem*/
 .menuStyle {
-    position: fixed; /* Фиксированное положение */
+    position: absolute; /* Фиксированное положение */
     left: 220px;
     top: 0; /* Левый нижний угол */
     background-color: #FFF;
@@ -9,7 +9,6 @@
     /*vertical-align: middle;*/
     display: flex;
     /*max-height:32px;*/
-
 }
 
 .uiButtons {

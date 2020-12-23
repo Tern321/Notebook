@@ -17,24 +17,14 @@ namespace Forum.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        //private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        public IActionResult Manual()
         {
             return View();
         }
@@ -43,7 +33,17 @@ namespace Forum.Controllers
         {
             return Content(FileManager.readJson());
         }
+        
+        public ActionResult deleteBranch(string login, string password, string branchId )
+        {
+            return Content("not implemented");
+        }
 
+        [HttpPost]
+        public ActionResult createBranch([FromBody] SerializedData createBranchData)
+        {
+            return Content("not implemented");
+        }
         [HttpPost]
         public ActionResult saveUdatedData([FromBody] SerializedData data)
         {
@@ -56,26 +56,27 @@ namespace Forum.Controllers
             return Content("error");
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+
+        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        //public IActionResult Error()
+        //{
+        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        //}
 
 
-        static long lastChangeTimeValue = 0;
-        public ActionResult lastChangeTime()
-        {
+        //static long lastChangeTimeValue = 0;
+        //public ActionResult lastChangeTime()
+        //{
             
-            return Content(HomeController.lastChangeTimeValue.ToString());
-        }
+        //    return Content(HomeController.lastChangeTimeValue.ToString());
+        //}
 
-        [Route("Home/setLastChangeTime/{time:long}")]
-        public ActionResult setLastChangeTime(long time)
-        {
-            HomeController.lastChangeTimeValue = time;
-            return Content("ok");
-        }
+        //[Route("Home/setLastChangeTime/{time:long}")]
+        //public ActionResult setLastChangeTime(long time)
+        //{
+        //    HomeController.lastChangeTimeValue = time;
+        //    return Content("ok");
+        //}
 
     }
 }

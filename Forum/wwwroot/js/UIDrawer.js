@@ -54,14 +54,14 @@ class UIDrawer {
         var width = UIDrawer.topicsWidth - offset;
         //style =\"" + positionString + sizeString + " background:" + color +
         if (contention.id == Controller.topicId) {
-            return "<button class='topicButton' style=\"background-color: #AAA; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
+            return "<button class='topicButton' style=\"background-color: #AAA; width: " + width + "px; height: 20px; \" onclick = \"ActionsController.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
         }
         else {
             var backgroundColor = contention.color;
             if (backgroundColor == undefined) {
                 backgroundColor = "#FFF";
             }
-            return "<button class='topicButton' style=\"background-color: " + backgroundColor + "; width: " + width + "px; height: 20px; \" onclick = \"Controller.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
+            return "<button class='topicButton' style=\"background-color: " + backgroundColor + "; width: " + width + "px; height: 20px; \" onclick = \"ActionsController.moveToTopic(event, '" + contention.id + "')\" >" + contention.text + "</button>";
         }
     }
     //static drawUI(drawAll: boolean) {

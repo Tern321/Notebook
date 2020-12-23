@@ -74,8 +74,11 @@ class UpdateDataRequestController {
                         });
                     }
                     else {
-                        UpdateDataRequestController.updateDataRequestLock = false;
-                        alert("Reload page to update data");
+                        console.log("data out of date, reloading");
+                        // reload data, apply changes, try o save once more
+                        Controller.reload();
+                        //UpdateDataRequestController.updateDataRequestLock = false;
+                        //alert("Reload page to update data");
                     }
                 }).catch(function (body) {
                     UpdateDataRequestController.updateDataRequestLock = false;
@@ -86,7 +89,7 @@ class UpdateDataRequestController {
     }
     static checkChangeTimeAndSaveUpdatedData() {
         return __awaiter(this, void 0, void 0, function* () {
-            //console.log("checkChangeTimeAndSaveUpdatedData");
+            console.log("checkChangeTimeAndSaveUpdatedData");
             UpdateDataRequestController.shouldSendUpdateDataRequest = true;
             UpdateDataRequestController.lockCheckChangeTimeAndSaveUpdatedData();
         });
@@ -100,10 +103,10 @@ class UpdateDataRequestController {
             var list = [];
             Model.rootContention().recursiveAddChilds(list);
             var json = JSON.stringify(list);
-            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey());
+            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey(), Controller.commandsList.length);
         }
     }
-    static saveJson(url, json, loginHash, password) {
+    static saveJson(url, json, loginHash, password, savedCommandsCount) {
         return __awaiter(this, void 0, void 0, function* () {
             CryptoWarper.encrypt(password, json).then(function (encriptionData) {
                 var data = new SerializedData();
@@ -130,7 +133,9 @@ class UpdateDataRequestController {
                 }).then(function (body) { return body.text(); }).then(function (data) {
                     //console.log(data);
                     if (data == "ok") {
-                        //console.log("data saved");
+                        console.log("data saved, clean command list");
+                        Controller.commandsList = Controller.commandsList.slice(savedCommandsCount);
+                        //
                     }
                     else {
                         alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");
