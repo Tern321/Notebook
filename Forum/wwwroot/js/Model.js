@@ -79,7 +79,6 @@ class Model {
             Model.contentionsMap.set(cn.id, cn);
         }
         Model.contentionsMap.get("root").topic = true;
-        Controller.executeSavedCommands();
         Model.updateTopics();
         UIDrawer.drawUI();
     }

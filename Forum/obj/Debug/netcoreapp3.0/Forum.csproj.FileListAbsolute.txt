@@ -1,5 +1,6 @@
 D:\Dropbox\program\typescript\Forum\Forum\bin\Debug\netcoreapp3.0\appsettings.Development.json
 D:\Dropbox\program\typescript\Forum\Forum\bin\Debug\netcoreapp3.0\appsettings.json
+D:\Dropbox\program\typescript\Forum\Forum\bin\Debug\netcoreapp3.0\Properties\launchSettings.json
 D:\Dropbox\program\typescript\Forum\Forum\bin\Debug\netcoreapp3.0\tsconfig.json
 D:\Dropbox\program\typescript\Forum\Forum\bin\Debug\netcoreapp3.0\Views\Home\json.json
 D:\Dropbox\program\typescript\Forum\Forum\bin\Debug\netcoreapp3.0\Forum.exe
@@ -37,4 +38,3 @@ D:\Dropbox\program\typescript\Forum\Forum\obj\Debug\netcoreapp3.0\Forum.pdb
 D:\Dropbox\program\typescript\Forum\Forum\obj\Debug\netcoreapp3.0\Forum.genruntimeconfig.cache
 D:\Dropbox\program\typescript\Forum\Forum\obj\Debug\netcoreapp3.0\Forum.csproj.CopyComplete
 D:\Dropbox\program\typescript\Forum\Forum\obj\Debug\netcoreapp3.0\Forum.csprojAssemblyReference.cache
-D:\Dropbox\program\typescript\Forum\Forum\obj\Debug\netcoreapp3.0\scopedcss\bundle\Forum.styles.css

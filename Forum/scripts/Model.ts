@@ -74,6 +74,7 @@
                 if (parentContentionChildsList) {
                     parentContentionChildsList.push(cn.id);
                 }
+                
             });
             UpdateDataRequestController.getLastChangeTime(Network.getJsonUpdateTimeUrl(Controller.getTextAreaValue("loginTextArea").trim()));
         }
@@ -93,7 +94,6 @@
         }
 
         Model.contentionsMap.get("root").topic = true;
-        Controller.executeSavedCommands();
         Model.updateTopics();
         UIDrawer.drawUI();
     }

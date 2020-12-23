@@ -45,6 +45,13 @@ class Contention {
     }
     indexInParentContention() {
         var parentContention = this.parentContention();
+        console.log("indexInParentContention");
+        console.log("contention");
+        console.log(this);
+        console.log("parent");
+        console.log(parentContention);
+        console.log("search for " + this.id);
+        console.log("childs " + parentContention.childs());
         if (!parentContention) {
             return -1;
         }
