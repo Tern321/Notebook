@@ -3,3 +3,6 @@
 *.pdb
 *.map
 .vs/Forum/v16/.suo
+Forum/obj/Debug/*
+Forum/bin/Debug/*
+.vs/Forum/DesignTimeBuild/*
