@@ -57,26 +57,26 @@ namespace Forum.Controllers
         }
 
 
-        //[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        //public IActionResult Error()
-        //{
-        //    return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        //}
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
 
 
-        //static long lastChangeTimeValue = 0;
-        //public ActionResult lastChangeTime()
-        //{
-            
-        //    return Content(HomeController.lastChangeTimeValue.ToString());
-        //}
+        static long lastChangeTimeValue = 0;
+        public ActionResult lastChangeTime()
+        {
 
-        //[Route("Home/setLastChangeTime/{time:long}")]
-        //public ActionResult setLastChangeTime(long time)
-        //{
-        //    HomeController.lastChangeTimeValue = time;
-        //    return Content("ok");
-        //}
+            return Content(HomeController.lastChangeTimeValue.ToString());
+        }
+
+        [Route("Home/setLastChangeTime/{time:long}")]
+        public ActionResult setLastChangeTime(long time)
+        {
+            HomeController.lastChangeTimeValue = time;
+            return Content("ok");
+        }
 
     }
 }
