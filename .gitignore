@@ -2,3 +2,5 @@
 *.cache
 *.exe
 *.cache
+Forum/bin/Debug/netcoreapp3.0/Forum.Views.dll
+Forum/bin/Debug/netcoreapp3.0/Forum.dll
