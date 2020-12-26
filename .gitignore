@@ -1,4 +1,7 @@
-
-*.cache
-*.exe
+*.pdb
+*.map
+.vs/Forum/*
+Forum/obj/Debug/*
+Forum/bin/Debug/*
+.vs/Forum/*
 *.cache
