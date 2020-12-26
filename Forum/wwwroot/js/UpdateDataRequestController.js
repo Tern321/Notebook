@@ -113,7 +113,7 @@ class UpdateDataRequestController {
                 data.encriptedData = encriptionData;
                 var json = "";
                 var contentType = "text/plain";
-                if (Network.localhosted()) {
+                if (Network.localhosted) {
                     json = JSON.stringify(data);
                     contentType = "application/json";
                 }
