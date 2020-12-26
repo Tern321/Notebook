@@ -75,14 +75,9 @@
                             alert("Failed to set last update time");
                         });
                 }
-                else
-                {
-                    console.log("data out of date, reloading");
-                    // reload data, apply changes, try o save once more
-                    Controller.reload();
-                    
-                    //UpdateDataRequestController.updateDataRequestLock = false;
-                    //alert("Reload page to update data");
+                else {
+                    UpdateDataRequestController.updateDataRequestLock = false;
+                    alert("Reload page to update data");
 
                 }
             }).catch(function (body) {
@@ -95,7 +90,7 @@
 
     static async checkChangeTimeAndSaveUpdatedData()
     {
-        console.log("checkChangeTimeAndSaveUpdatedData");
+        //console.log("checkChangeTimeAndSaveUpdatedData");
         UpdateDataRequestController.shouldSendUpdateDataRequest = true;
         UpdateDataRequestController.lockCheckChangeTimeAndSaveUpdatedData();
     }
@@ -111,18 +106,18 @@
             Model.rootContention().recursiveAddChilds(list);
 
             var json = JSON.stringify(list);
-            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey(), Controller.commandsList.length);
+            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey());
         }
     }
 
-    static async saveJson(url: string, json: string, loginHash: string, password: string, savedCommandsCount: number) {
+    static async saveJson(url: string, json: string, loginHash: string, password: string) {
         CryptoWarper.encrypt(password, json).then(function (encriptionData: EncriptionData) {
             var data: SerializedData = new SerializedData();
             data.encriptedData = encriptionData;
 
             var json = "";
             var contentType = "text/plain";
-            if (Network.localhosted) {
+            if (Network.localhosted()) {
                 json = JSON.stringify(data);
                 contentType = "application/json";
             }
@@ -144,9 +139,7 @@
             }).then(function (body) { return body.text(); }).then(function (data) {
                 //console.log(data);
                 if (data == "ok") {
-                    console.log("data saved, clean command list");
-                    Controller.commandsList = Controller.commandsList.slice(savedCommandsCount);
-                    //
+                    //console.log("data saved");
                 }
                 else {
                     alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");

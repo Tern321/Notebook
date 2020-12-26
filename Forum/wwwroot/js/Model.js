@@ -79,7 +79,6 @@ class Model {
             Model.contentionsMap.set(cn.id, cn);
         }
         Model.contentionsMap.get("root").topic = true;
-        Controller.executeSavedCommands();
         Model.updateTopics();
         UIDrawer.drawUI();
     }
@@ -175,9 +174,9 @@ class Model {
         Model.updateTopics();
     }
     static moveContention(contentionId, targetId) {
+        var contention = Model.contentionForId(contentionId);
         Model.removeContention(contentionId);
         Model.contentionForId(targetId).childs().push(contentionId);
-        var contention = Model.contentionForId(contentionId);
         Model.contentionsMap.set(contentionId, contention);
         contention.parentContentionId = targetId;
         Model.updateTopics();

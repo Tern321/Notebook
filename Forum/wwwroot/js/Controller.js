@@ -151,16 +151,7 @@ class Controller {
         }
     }
     static executeCommand(command) {
-        Controller.commandsList.push(command);
         Model.executeCommand(command);
-    }
-    static executeSavedCommands() {
-        Controller.commandsList.forEach(function (command) {
-            Model.executeCommand(command);
-        });
-        if (Controller.commandsList.length > 0) {
-            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        }
     }
 }
 Controller.topicId = "root";
@@ -168,7 +159,6 @@ Controller.changeSelectedContention = false;
 Controller.shouldSaveContentionOrder = true;
 Controller.showAllEnabled = false;
 Controller.cutContentionList = [];
-Controller.commandsList = [];
 function download(filename, text) {
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));

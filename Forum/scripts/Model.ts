@@ -74,6 +74,7 @@
                 if (parentContentionChildsList) {
                     parentContentionChildsList.push(cn.id);
                 }
+                
             });
             UpdateDataRequestController.getLastChangeTime(Network.getJsonUpdateTimeUrl(Controller.getTextAreaValue("loginTextArea").trim()));
         }
@@ -93,7 +94,6 @@
         }
 
         Model.contentionsMap.get("root").topic = true;
-        Controller.executeSavedCommands();
         Model.updateTopics();
         UIDrawer.drawUI();
     }
@@ -205,11 +205,12 @@
     }
 
     static moveContention(contentionId: string, targetId: string) {
-        
+
+        var contention = Model.contentionForId(contentionId);
         Model.removeContention(contentionId);
         Model.contentionForId(targetId).childs().push(contentionId);
 
-        var contention = Model.contentionForId(contentionId);
+        
         Model.contentionsMap.set(contentionId, contention);
         contention.parentContentionId = targetId;
 

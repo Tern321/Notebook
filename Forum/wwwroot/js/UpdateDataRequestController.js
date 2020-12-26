@@ -74,11 +74,8 @@ class UpdateDataRequestController {
                         });
                     }
                     else {
-                        console.log("data out of date, reloading");
-                        // reload data, apply changes, try o save once more
-                        Controller.reload();
-                        //UpdateDataRequestController.updateDataRequestLock = false;
-                        //alert("Reload page to update data");
+                        UpdateDataRequestController.updateDataRequestLock = false;
+                        alert("Reload page to update data");
                     }
                 }).catch(function (body) {
                     UpdateDataRequestController.updateDataRequestLock = false;
@@ -89,7 +86,7 @@ class UpdateDataRequestController {
     }
     static checkChangeTimeAndSaveUpdatedData() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("checkChangeTimeAndSaveUpdatedData");
+            //console.log("checkChangeTimeAndSaveUpdatedData");
             UpdateDataRequestController.shouldSendUpdateDataRequest = true;
             UpdateDataRequestController.lockCheckChangeTimeAndSaveUpdatedData();
         });
@@ -103,17 +100,17 @@ class UpdateDataRequestController {
             var list = [];
             Model.rootContention().recursiveAddChilds(list);
             var json = JSON.stringify(list);
-            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey(), Controller.commandsList.length);
+            UpdateDataRequestController.saveJson(Network.uploadDataUrl(), json, hash.toString(), Controller.getEncriptionKey());
         }
     }
-    static saveJson(url, json, loginHash, password, savedCommandsCount) {
+    static saveJson(url, json, loginHash, password) {
         return __awaiter(this, void 0, void 0, function* () {
             CryptoWarper.encrypt(password, json).then(function (encriptionData) {
                 var data = new SerializedData();
                 data.encriptedData = encriptionData;
                 var json = "";
                 var contentType = "text/plain";
-                if (Network.localhosted) {
+                if (Network.localhosted()) {
                     json = JSON.stringify(data);
                     contentType = "application/json";
                 }
@@ -133,9 +130,7 @@ class UpdateDataRequestController {
                 }).then(function (body) { return body.text(); }).then(function (data) {
                     //console.log(data);
                     if (data == "ok") {
-                        console.log("data saved, clean command list");
-                        Controller.commandsList = Controller.commandsList.slice(savedCommandsCount);
-                        //
+                        //console.log("data saved");
                     }
                     else {
                         alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");

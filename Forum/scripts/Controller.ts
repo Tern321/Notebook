@@ -7,7 +7,7 @@ class Controller {
     static showAllEnabled: boolean = false;
 
     static cutContentionList: string[] = []
-    static commandsList: Command[] = [];
+
     // getters and setters
     static selectedcontention(): Contention {
         return Model.contentionsMap.get(Controller.selectedContentionId);
@@ -177,20 +177,9 @@ class Controller {
     }
 
     static executeCommand(command: Command) {
-        Controller.commandsList.push(command);
         Model.executeCommand(command);
     }
 
-    static executeSavedCommands()
-    {
-        Controller.commandsList.forEach(function (command: Command) {
-            Model.executeCommand(command);
-        });
-
-        if (Controller.commandsList.length > 0) {
-            UpdateDataRequestController.checkChangeTimeAndSaveUpdatedData();
-        }
-    }
 }
 
 function download(filename, text) {
