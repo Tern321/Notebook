@@ -52,7 +52,7 @@ function checkWindowSize() {
         uiElement.style.position = "fixed";
         topicsElement.style.position = "fixed";
     }
-    console.log(window.innerHeight);
+    //console.log(window.innerHeight);
     //1196 x 659
     //var topicsElement = document.getElementById("topics");
     //if (window.innerWidth < 600) {

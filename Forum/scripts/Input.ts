@@ -65,7 +65,7 @@ function checkWindowSize() {
         uiElement.style.position = "fixed";
         topicsElement.style.position = "fixed";
     }
-    console.log(window.innerHeight);
+    //console.log(window.innerHeight);
 
     //1196 x 659
 

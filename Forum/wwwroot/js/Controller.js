@@ -153,6 +153,15 @@ class Controller {
     static executeCommand(command) {
         Model.executeCommand(command);
     }
+    // UI
+    static hideKeyboard() {
+        Controller.argumentTextArea().focus();
+        Controller.argumentTextArea().blur();
+    }
+    static showLogin() {
+        document.getElementById("loginTextArea").style.width = "400px";
+        document.getElementById("encriptionKeyTextArea").style.width = "400px";
+    }
 }
 Controller.topicId = "root";
 Controller.changeSelectedContention = false;

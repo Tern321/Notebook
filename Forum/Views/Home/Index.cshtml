@@ -5,33 +5,43 @@
     <div id="contentions"></div>
     <div id="topics" class="topicsStyle"></div>
     <div id="uiDiv" class="menuStyle">
-        <textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:55px;"></textarea>
-        <div class="uiButtons">
+        <div>
+            <button class="UIButton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
+            <br />
+            <button class="UIButton" onclick="Controller.hideKeyboard()" id='hideButton'>hide</button>
+        </div>
+        <textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:56px;"></textarea>
+        <div>
             <nobr>
-                <textarea id="loginTextArea" style="width:20px; height:20px;" placeholder="логин"></textarea>
-                <button style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
-                <button style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
-                <button style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
-                <button class="UIBbutton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
-                <button class="UIBbutton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
-                <button class="UIBbutton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
-                <button class="UIBbutton" onclick="">перенести</button>
-                <button class="UIBbutton" onclick="ActionsController.import()">import</button>
-                <button class="UIBbutton" onclick="ActionsController.addLink()">Add Link</button>
+                <button class="UIButton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
+                <button class="UIButton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
+                <button class="UIButton" onclick="">перенести</button>
+                <button class="UIButton" onclick="ActionsController.import()">import</button>
+                <button class="UIButton" onclick="ActionsController.addLink()">Add Link</button>
+                <button class="UIButton" onclick="Controller.showLogin()">Show</button>
+
+                <button class="UIColorButton" style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
+                <button class="UIColorButton" style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
+                <button class="UIColorButton" style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
             </nobr>
             <br />
             <nobr>
-                <textarea id="encriptionKeyTextArea" style="width:20px; height:20px;" placeholder="ключ для шифрования"></textarea>
-                <button style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
-                <button style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
-                <button style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
-                <button class="UIBbutton" onclick="ActionsController.addUrl()">Add Url</button>
-                <button class="UIBbutton" onclick="ActionsController.deleteContention()">удалить</button>
-                <button class="UIBbutton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
-                <button class="UIBbutton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
-                <button class="UIBbutton" onclick="ActionsController.export()">export</button>
-                <button class="UIBbutton" onclick="Controller.reload()">Reload</button>
+                <button class="UIButton" onclick="ActionsController.addUrl()">Add Url</button>
+                <button class="UIButton" onclick="ActionsController.deleteContention()">удалить</button>
+                <button class="UIButton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
+                <button class="UIButton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
+                <button class="UIButton" onclick="ActionsController.export()">export</button>
+                <button class="UIButton" onclick="Controller.reload()">Reload</button>
+
+                <button class="UIColorButton" style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
+                <button class="UIColorButton" style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
+                <button class="UIColorButton" style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
             </nobr>
         </div>
+        <div>
+            <textarea class="LoginTextArea" id="loginTextArea" placeholder="логин"></textarea>
+            <br />
+            <textarea class="LoginTextArea" id="encriptionKeyTextArea" placeholder="ключ для шифрования"></textarea>
+        </div>
     </div>
-</div>
+    </div>

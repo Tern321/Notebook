@@ -180,6 +180,15 @@ class Controller {
         Model.executeCommand(command);
     }
 
+    // UI
+    static hideKeyboard() {
+        Controller.argumentTextArea().focus();
+        Controller.argumentTextArea().blur();
+    }
+    static showLogin() {
+        document.getElementById("loginTextArea").style.width = "400px";
+        document.getElementById("encriptionKeyTextArea").style.width = "400px";
+    }
 }
 
 function download(filename, text) {
