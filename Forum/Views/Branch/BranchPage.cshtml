@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div ondrop="Controller.addFile(event);" ondragover="Controller.dragover_handler(event);">
+    <div id="contentions"></div>
+    <div id="topics" class="topicsStyle"></div>
+    <div id="uiDiv" class="menuStyle">
+        <div>
+            <button class="UIButton" onclick="BranchPageActionsController.addContention()" id='addButton'>Добавить</button>
+            <br />
+            <button class="UIButton" onclick="BranchPageController.hideKeyboard()" id='hideButton'>hide</button>
+        </div>
+        <textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:56px;"></textarea>
+        <div>
+            <nobr>
+                <button class="UIButton" onclick="BranchPageActionsController.changeContention()" id='changeButton'>Изменить</button>
+                <button class="UIButton" onclick="BranchPageActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
+                <button class="UIButton" onclick="">перенести</button>
+                <button class="UIButton" onclick="BranchPageActionsController.import()">import</button>
+                <button class="UIButton" onclick="BranchPageActionsController.addLink()">Add Link</button>
+                <button class="UIButton" onclick="BranchPageController.showLogin()">Show</button>
+                <button class="UIButton" onclick="BranchPageController.copy()">Copy</button>
+                <button class="UIButton" onclick="BranchPageController.AccountPage()">Account</button>
+
+                <button class="UIColorButton" style="background-color:#03fcbe;" onclick="BranchPageActionsController.changeContentionColor('#03fcbe')"> Text</button>
+                <button class="UIColorButton" style="background-color:#7bfc03;" onclick="BranchPageActionsController.changeContentionColor('#7bfc03')"> Text</button>
+                <button class="UIColorButton" style="background-color:#f8fc03;" onclick="BranchPageActionsController.changeContentionColor('#f8fc03')"> Text</button>
+            </nobr>
+            <br />
+            <nobr>
+                <button class="UIButton" onclick="BranchPageActionsController.addUrl()">Add Url</button>
+                <button class="UIButton" onclick="BranchPageActionsController.deleteContention()">удалить</button>
+                <button class="UIButton" onclick="BranchPageActionsController.addSelectedToArchive()">(archive)</button>
+                <button class="UIButton" onclick="BranchPageActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
+                <button class="UIButton" onclick="BranchPageActionsController.export()">export</button>
+                <button class="UIButton" onclick="BranchPageController.reload()">Reload</button>
+                <button class="UIButton" onclick="BranchPageController.copy()">Copy</button>
+                <button class="UIButton" onclick="BranchPageController.AccountPage()">Account</button>
+
+                <button class="UIColorButton" style="background-color:#FFF;" onclick="BranchPageActionsController.changeContentionColor('#FFF')"> Text</button>
+                <button class="UIColorButton" style="background-color:#fc03f0;" onclick="BranchPageActionsController.changeContentionColor('#fc03f0')"> Text</button>
+                <button class="UIColorButton" style="background-color:#fc3503;" onclick="BranchPageActionsController.changeContentionColor('#fc3503')"> Text</button>
+            </nobr>
+        </div>
+        <div>
+            <textarea class="LoginTextArea" id="loginTextArea" placeholder="логин"></textarea>
+            <br />
+            <textarea class="LoginTextArea" id="encriptionKeyTextArea" placeholder="ключ для шифрования"></textarea>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/controller/BranchPageController.js"></script>
+<script src="~/js/controller/BranchPageActionsController.js"></script>
+@*<script src="~/js/controller/AccountPageController.js"></script>*@
+
+<script src="~/js/view/Input.js"></script>
+<script src="~/js/view/UIDrawer.js"></script>
+
+<script src="~/js/model/Model.js"></script>
+<script src="~/js/model/BranchesData.js"></script>
+<script src="~/js/model/Branch.js"></script>
+<script src="~/js/model/Command.js"></script>
+<script src="~/js/model/Contention.js"></script>
+
+<script src="~/js/libs/Base32.js"></script>
+<script src="~/js/libs/Network.js"></script>
+<script src="~/js/libs/Encryption.js"></script>
+<script src="~/js/libs/json.js"></script>
+<script src="~/js/libs/Common.js"></script>
+
+<script src="~/js/managers/UpdateDataRequestController.js"></script>
+<script src="~/js/managers/AccountManager.js"></script>

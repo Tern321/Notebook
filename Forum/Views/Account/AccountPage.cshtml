@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Account";
+}
+<h1>@ViewData["Title"]</h1>
+
+<p>Account page.</p>
+<div>
+    <button class="UIButton" onclick="AccountPageController.createAccount()">Create</button>
+    <br />
+    <button class="UIButton" onclick="AccountPageController.login()">Login</button>
+    <br />
+
+    <input type="text" id="mailTextFieldKey" value="" placeholder="mail">
+    <input type="text" id="passwordTextFieldKey" value="" placeholder="password">
+    <input type="text" id="encryptionTextFieldKey" value="" placeholder="encryptionKey">
+    <input type="text" id="userIdTextFieldKey" value="" placeholder="userId">
+    <br />
+    @*<button class="UIButton" onclick="AccountPageController.createAccount()">Login</button>
+        <input type="text" id="mail" value="">
+        <input type="text" id="password" value="">*@
+</div>
+        logout
+        save updated data
+<br />
+        create account
+        enter mail and open link in it
+<br />
+Create branch
+<br />
+<button class="UIButton" onclick="AccountPageController.createBranch('personal')">Personal</button>
+<button class="UIButton" onclick="AccountPageController.createBranch('private')">Private</button>
+<button class="UIButton" onclick="AccountPageController.createBranch('public')">Public</button>
+<br />
+<input type="text" id="branchNameTextFieldKey" value="" placeholder="branch name">
+<input type="text" id="branchEncryptionTextFieldKey" value="" placeholder="encryption key">
+<br />
+my branches
+<br />
+admin branches
+<br />
+write branches
+<br />
+read branches
+<br />
+
+<br />
+
+<br />
+        mail
+        id
+        nick
+        password
+        encryptionKey
+
+        // filter
+<br />
+        my branches
+        add new "name" encryption key - generated randomly if empty
+<br />
+        list:
+        id
+        name
+        view branch info
+        create new read password
+        create new write password
+        encryption key
+
+
+        saved branches:
+        id
+        name
+        enctyptionKey
+
+<script src="~/js/controller/AccountPageController.js"></script>
+<script src="~/js/libs/Network.js"></script>
+<script src="~/js/libs/Encryption.js"></script>
+<script src="~/js/libs/Common.js"></script>
+<script src="~/js/libs/json.js"></script>

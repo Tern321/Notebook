@@ -5,10 +5,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="scripts\RequestObjects\**" />
+    <Compile Remove="wwwroot\js\RequestObjects\**" />
+    <Content Remove="scripts\RequestObjects\**" />
+    <Content Remove="wwwroot\js\RequestObjects\**" />
+    <EmbeddedResource Remove="scripts\RequestObjects\**" />
+    <EmbeddedResource Remove="wwwroot\js\RequestObjects\**" />
+    <None Remove="scripts\RequestObjects\**" />
+    <None Remove="wwwroot\js\RequestObjects\**" />
+    <TypeScriptCompile Remove="scripts\RequestObjects\**" />
+    <TypeScriptCompile Remove="wwwroot\js\RequestObjects\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
   </ItemGroup>
 
 </Project>
