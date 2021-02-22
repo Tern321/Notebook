@@ -16,6 +16,15 @@
     
 }
 
+.LoginTextArea {
+    width: 20px;
+    height: 26px;
+    background-color: #FFF;
+    margin: 0px;
+    padding: 0px;
+    border: 1px solid black;
+}
+
 .UIButton {
     width: 80px;
     height: 28px;

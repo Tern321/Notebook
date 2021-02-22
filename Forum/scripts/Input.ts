@@ -125,7 +125,7 @@ function checkKeycode(event)
         return false;
     }
     
-    if (!Controller.textAreasHasFocus() && universalCtrlPressed(event))
+    if (!Controller.textAreasHasFocus() && universalCtrlPressed(event) && !shouldSkipNextCtrlEvent)
     {
         if (event.keyCode == 67) {
             //console.log("ctrl c");
@@ -149,7 +149,6 @@ function checkKeycode(event)
 
 var start: Date;
 function mouseDownEvent(e) {
-    //console.log("mouseDownEvent");
     start = new Date();
 }
 function mousePressedTime() {
@@ -158,11 +157,14 @@ function mousePressedTime() {
 }
 
 var pendingClick = 0;
+var shouldSkipNextCtrlEvent = false;
 
 function universalCtrlPressed(event) {
     return event.ctrlKey || event.metaKey;
 }
-function mouseClick(e) {
+
+function mouseClick(e)
+{
     var selectableObject = e.target.getAttribute("selectable")
     if (!selectableObject)  // clicked not on contention
     {
@@ -177,6 +179,17 @@ function mouseClick(e) {
         clearTimeout(pendingClick);
         pendingClick = 0;
     }
+
+    if (mousePressedTime() < 5) {
+        // mouse down click
+        return true;
+    }
+    if (mousePressedTime() > 1000) {
+        // mouse selection event
+        shouldSkipNextCtrlEvent = true;
+        return true;
+    }
+    shouldSkipNextCtrlEvent = false;
     //console.log("ctrlKey:" + e.ctrlKey + " shiftKey:" + e.shiftKey + " altKey:" + e.altKey + " keyCode:" + e.keyCode);
 
     var contentionElement = e.target;

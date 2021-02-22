@@ -976,7 +976,7 @@ function checkKeycode(event) {
         ActionsController.moveContentionUp(event.keyCode == upKeyCode);
         return false;
     }
-    if (!Controller.textAreasHasFocus() && universalCtrlPressed(event)) {
+    if (!Controller.textAreasHasFocus() && universalCtrlPressed(event) && !shouldSkipNextCtrlEvent) {
         if (event.keyCode == 67) {
             //console.log("ctrl c");
             ActionsController.copyContentionCtrlC();
@@ -997,7 +997,6 @@ function checkKeycode(event) {
 }
 var start;
 function mouseDownEvent(e) {
-    //console.log("mouseDownEvent");
     start = new Date();
 }
 function mousePressedTime() {
@@ -1005,6 +1004,7 @@ function mousePressedTime() {
     return (end.getTime() - start.getTime());
 }
 var pendingClick = 0;
+var shouldSkipNextCtrlEvent = false;
 function universalCtrlPressed(event) {
     return event.ctrlKey || event.metaKey;
 }
@@ -1022,6 +1022,16 @@ function mouseClick(e) {
         clearTimeout(pendingClick);
         pendingClick = 0;
     }
+    if (mousePressedTime() < 5) {
+        // mouse down click
+        return true;
+    }
+    if (mousePressedTime() > 1000) {
+        // mouse selection event
+        shouldSkipNextCtrlEvent = true;
+        return true;
+    }
+    shouldSkipNextCtrlEvent = false;
     //console.log("ctrlKey:" + e.ctrlKey + " shiftKey:" + e.shiftKey + " altKey:" + e.altKey + " keyCode:" + e.keyCode);
     var contentionElement = e.target;
     if (contentionElement.getAttribute("container")) {
@@ -1271,6 +1281,8 @@ class Model {
     }
     static addContention(contentionId, parentContentionId, text, url, linkId) {
         text = text.trim();
+        if (!text)
+            return;
         if (text.length > 0 || url.length > 0) {
             var parentContention = Model.contentionForId(parentContentionId);
             if (parentContention.linkId != undefined) {
@@ -1691,4 +1703,21 @@ class UpdateDataRequestController {
                 return fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': contentType },
-                
+                    body: json
+                }).then(function (body) { return body.text(); }).then(function (data) {
+                    //console.log(data);
+                    if (data == "ok") {
+                        //console.log("data saved");
+                    }
+                    else {
+                        alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");
+                    }
+                }).catch(function (body) {
+                    UpdateDataRequestController.updateDataRequestLock = false;
+                    alert("Failed to update data");
+                });
+            });
+        });
+    }
+}
+UpdateDataRequestContro
