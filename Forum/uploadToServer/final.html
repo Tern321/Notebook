@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,43 +9,53 @@
 </head>
 <body>
     <div class="container">
-    <div ondrop="Controller.addFile(event);" ondragover="Controller.dragover_handler(event);">
-    <div id="contentions"></div>
-    <div id="topics" class="topicsStyle"></div>
-    <div id="uiDiv" class="menuStyle">
-        <textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:55px;"></textarea>
-        <div class="uiButtons">
-            <nobr>
-                <textarea id="loginTextArea" style="width:20px; height:20px;" placeholder="логин"></textarea>
-                <button style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
-                <button style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
-                <button style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
-                <button class="UIBbutton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
-                <button class="UIBbutton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
-                <button class="UIBbutton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
-                <button class="UIBbutton" onclick="">перенести</button>
-                <button class="UIBbutton" onclick="ActionsController.import()">import</button>
-                <button class="UIBbutton" onclick="ActionsController.addLink()">Add Link</button>
-            </nobr>
-            <br />
-            <nobr>
-                <textarea id="encriptionKeyTextArea" style="width:20px; height:20px;" placeholder="ключ для шифрования"></textarea>
-                <button style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
-                <button style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
-                <button style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
-                <button class="UIBbutton" onclick="ActionsController.addUrl()">Add Url</button>
-                <button class="UIBbutton" onclick="ActionsController.deleteContention()">удалить</button>
-                <button class="UIBbutton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
-                <button class="UIBbutton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
-                <button class="UIBbutton" onclick="ActionsController.export()">export</button>
-                <button class="UIBbutton" onclick="Controller.reload()">Reload</button>
-            </nobr>
-        </div>
-    </div>
-	</div>
+		<div style="width:1700px; height:1px;"></div>
+		<div id="contentions"></div>
+		<div id="topics" class="topicsStyle"></div>
+		<div id="uiDiv" class="menuStyle">
+			<div>
+				<button class="UIButton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
+				<br />
+				<button class="UIButton" onclick="Controller.hideKeyboard()" id='hideButton'>hide</button>
+			</div>
+			<textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:56px;"></textarea>
+			<div>
+				<nobr>
+					<button class="UIButton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
+					<button class="UIButton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
+					<button class="UIButton" onclick="">перенести</button>
+					<button class="UIButton" onclick="ActionsController.import()">import</button>
+					<button class="UIButton" onclick="ActionsController.addLink()">Add Link</button>
+					<button class="UIButton" onclick="Controller.showLogin()">Show</button>
+					<button class="UIButton" onclick="Controller.copy()">Copy</button>
+
+					<button class="UIColorButton" style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
+					<button class="UIColorButton" style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
+					<button class="UIColorButton" style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
+				</nobr>
+				<br />
+				<nobr>
+					<button class="UIButton" onclick="ActionsController.addUrl()">Add Url</button>
+					<button class="UIButton" onclick="ActionsController.deleteContention()">удалить</button>
+					<button class="UIButton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
+					<button class="UIButton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
+					<button class="UIButton" onclick="ActionsController.export()">export</button>
+					<button class="UIButton" onclick="Controller.reload()">Reload</button>
+					<button class="UIButton" onclick="Controller.copy()">Copy</button>
+					
+					<button class="UIColorButton" style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
+					<button class="UIColorButton" style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
+					<button class="UIColorButton" style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
+				</nobr>
+			</div>
+			<div>
+				<textarea class="LoginTextArea" id="loginTextArea" placeholder="логин"></textarea>
+				<br />
+				<textarea class="LoginTextArea" id="encriptionKeyTextArea" placeholder="ключ для шифрования"></textarea>
+			</div>
+		</div>
 	</div>
 	<div id="minHeightDiv" style="width:1px; height:100px;"></div>
-
 	
 	<script>class ActionsController {
     // selection
@@ -402,7 +411,7 @@
         Controller.executeCommand(Command.addContention(Model.generateRandomId(), parentId, text, url, undefined));
     }
 }
-//# sourceMappingURL=ActionsController
+//# sourceMappingURL=ActionsController.js.map 
 class Command {
     // commands
     static moveContentionToTop(contentionId) {
@@ -464,7 +473,7 @@ class Command {
         return command;
     }
 }
-//# sourceMappingURL=Command
+//# sourceMappingURL=Command.js.map 
 class CommandWrapper {
     // commands
     static moveContentionToTop(contentionId) {
@@ -494,7 +503,7 @@ class CommandWrapper {
     static switchContentionsOrder(contentionId, secondElementId, parentContentionId) {
     }
 }
-//# sourceMappingURL=CommandWrapper
+//# sourceMappingURL=CommandWrapper.js.map 
 class Contention {
     constructor(id, topic) {
         this.color = "#FFF";
@@ -571,7 +580,7 @@ class Contention {
         return;
     }
 }
-//# sourceMappingURL=Contention
+//# sourceMappingURL=Contention.js.map 
 class Controller {
     // getters and setters
     static selectedcontention() {
@@ -751,7 +760,7 @@ window.onload = () => {
     enableInput();
     Controller.reload();
 };
-//# sourceMappingURL=Controller
+//# sourceMappingURL=Controller.js.map 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -865,7 +874,7 @@ class CryptoWarper {
         });
     }
 }
-//# sourceMappingURL=Encription
+//# sourceMappingURL=Encription.js.map 
 function enableInput() {
     document.onkeyup = keyUp;
     document.onkeydown = checkKeycode;
@@ -1062,8 +1071,8 @@ function mouseClick(e) {
     }
     return false;
 }
-//# sourceMappingURL=Input
-//# sourceMappingURL=Lib
+//# sourceMappingURL=Input.js.map 
+//# sourceMappingURL=Lib.js.map 
 class Model {
     // getters
     static contentionForId(contentionId) {
@@ -1292,7 +1301,7 @@ Model.childContentionMap = new Map();
 Model.childTopicsMap = new Map();
 class SerializedData {
 }
-//# sourceMappingURL=Model
+//# sourceMappingURL=Model.js.map 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1350,7 +1359,7 @@ class Network {
 }
 class PostRequestData {
 }
-//# sourceMappingURL=Network
+//# sourceMappingURL=Network.js.map 
 class UIDrawer {
     static addCleanObjects(parentElement, contention, depth, x, y, drawAll) {
         //console.log("addCleanObjects");
@@ -1553,7 +1562,7 @@ class UIDrawer {
 UIDrawer.topicsWidth = 200;
 UIDrawer.maxHeight = 0;
 UIDrawer.topicIndex = 0;
-//# sourceMappingURL=UIDrawer
+//# sourceMappingURL=UIDrawer.js.map 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -1682,6 +1691,4 @@ class UpdateDataRequestController {
                 return fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': contentType },
-                    body: json
-                }).then(function (body) { return body.text(); }).then(function (data) {
-                    //co
+                

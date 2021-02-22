@@ -16,8 +16,9 @@
     
 }
 
-.UIBbutton {
+.UIButton {
     width: 80px;
+    height: 28px;
     background-color: #FFF;
     margin: 0px;
     padding: 0px;
