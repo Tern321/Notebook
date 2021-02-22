@@ -1,14 +1,19 @@
 ﻿class UIDrawer {
 
     static topicsWidth = 200;
+    static maxHeight = 0;
     static widthMap: Map<string, number>;
     static heightMap: Map<string, number>;
     static depthMap: Map<string, number>;
+
     static addCleanObjects(parentElement: Element, contention: Contention, depth: number, x: number, y: number, drawAll: boolean)
     {
         //console.log("addCleanObjects");
         //console.log(contention);
         parentElement.appendChild(UIDrawer.contentionHtml(contention, x, y));
+
+        var elementNedYPosition = y + UIDrawer.heightMap.get(contention.id);
+        if (UIDrawer.maxHeight < elementNedYPosition) UIDrawer.maxHeight = elementNedYPosition;
 
         x += UIDrawer.widthForDepth(depth);
 
@@ -84,6 +89,7 @@
    }
     //static drawUI(drawAll: boolean) {
     static drawUI() {
+        UIDrawer.maxHeight = 0;
         var drawAll = Controller.showAllEnabled;
         if (!Model.contentionsMap.has(Controller.topicId))
         {
@@ -146,7 +152,7 @@
         Controller.cutContentionList.forEach(function (contentionId) {
             Controller.setContentionBorderType(contentionId, true);
         });
-        checkWindowSize()
+        checkWindowSize();
     }
 
     static recursiveAddRawToDom(contention: Contention, contentionsDiv, rawElementIdList: string[]) {

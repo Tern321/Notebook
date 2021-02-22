@@ -3,6 +3,9 @@ class UIDrawer {
         //console.log("addCleanObjects");
         //console.log(contention);
         parentElement.appendChild(UIDrawer.contentionHtml(contention, x, y));
+        var elementNedYPosition = y + UIDrawer.heightMap.get(contention.id);
+        if (UIDrawer.maxHeight < elementNedYPosition)
+            UIDrawer.maxHeight = elementNedYPosition;
         x += UIDrawer.widthForDepth(depth);
         if (!contention.collapce || Controller.topicId == contention.id || drawAll) {
             contention.childs().forEach(function (childContentionId) {
@@ -66,6 +69,7 @@ class UIDrawer {
     }
     //static drawUI(drawAll: boolean) {
     static drawUI() {
+        UIDrawer.maxHeight = 0;
         var drawAll = Controller.showAllEnabled;
         if (!Model.contentionsMap.has(Controller.topicId)) {
             Controller.topicId = "root";
@@ -194,5 +198,6 @@ class UIDrawer {
     }
 }
 UIDrawer.topicsWidth = 200;
+UIDrawer.maxHeight = 0;
 UIDrawer.topicIndex = 0;
 //# sourceMappingURL=UIDrawer.js.map
