@@ -1,0 +1,63 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page - Forum</title>
+    <link rel="stylesheet" href="https://tern321.github.io/css/site.css" />
+    <link rel="icon" type="image/x-icon" href="https://tern321.github.io/img/favicon.ico">
+</head>
+<body>
+    <div class="container">
+		<div ondrop="Controller.addFile(event);" ondragover="Controller.dragover_handler(event);">
+			<div id="contentions"></div>
+			<div id="topics" class="topicsStyle"></div>
+			<div id="uiDiv" class="menuStyle">
+				<textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:55px;"></textarea>
+				<div class="uiButtons">
+					<nobr>
+						<textarea id="loginTextArea" style="width:20px; height:20px;" placeholder="логин"></textarea>
+						<button style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
+						<button style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
+						<button style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
+						<button class="UIBbutton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
+						<button class="UIBbutton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
+						<button class="UIBbutton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
+						<button class="UIBbutton" onclick="">перенести</button>
+						<button class="UIBbutton" onclick="ActionsController.import()">import</button>
+						<button class="UIBbutton" onclick="ActionsController.addLink()">Add Link</button>
+					</nobr>
+					<br />
+					<nobr>
+						<textarea id="encriptionKeyTextArea" style="width:20px; height:20px;" placeholder="ключ для шифрования"></textarea>
+						<button style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
+						<button style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
+						<button style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
+						<button class="UIBbutton" onclick="ActionsController.addUrl()">Add Url</button>
+						<button class="UIBbutton" onclick="ActionsController.deleteContention()">удалить</button>
+						<button class="UIBbutton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
+						<button class="UIBbutton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
+						<button class="UIBbutton" onclick="ActionsController.export()">export</button>
+						<button class="UIBbutton" onclick="Controller.reload()">Reload</button>
+					</nobr>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="minHeightDiv" style="width:1px; height:100px;"></div>
+
+	
+	<script src="/js/Command.js"></script>
+	<script src="/js/Contention.js"></script>
+	<script src="/js/ActionsController.js"></script>
+	<script src="/js/UpdateDataRequestController.js"></script>
+	<script src="/js/Controller.js"></script>
+	<script src="/js/Input.js"></script>
+	<script src="/js/UIDrawer.js"></script>
+	<script src="/js/Model.js"></script>
+	<script src="/js/Network.js"></script>
+	<script src="/js/Encription.js"></script>
+    	
+</body>
+</html>

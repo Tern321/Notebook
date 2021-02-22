@@ -52,19 +52,8 @@ function checkWindowSize() {
         uiElement.style.position = "fixed";
         topicsElement.style.position = "fixed";
     }
-    console.log(window.innerHeight);
     var minHeightDiv = document.getElementById("minHeightDiv");
     minHeightDiv.style.height = UIDrawer.maxHeight + 200 + "px";
-    console.log(UIDrawer.maxHeight);
-    //1196 x 659
-    //var topicsElement = document.getElementById("topics");
-    //if (window.innerWidth < 600) {
-    //    uiElement.style.position = "relative";
-    //}
-    //else {
-    //    uiElement.style.position = "fixed";
-    //}
-    //console.log(window.innerWidth + "  " + window.innerHeight);
 }
 function keyUp(event) {
     if (event.keyCode == 16) {
