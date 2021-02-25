@@ -197,7 +197,9 @@ class Model {
     static addContention(contentionId, parentContentionId, text, url, linkId) {
         text = text.trim();
         if (!text)
-            return;
+            text = "";
+        if (!url)
+            url = "";
         if (text.length > 0 || url.length > 0) {
             var parentContention = Model.contentionForId(parentContentionId);
             if (parentContention.linkId != undefined) {
