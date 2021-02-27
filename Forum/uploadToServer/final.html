@@ -8,56 +8,59 @@
     <link rel="icon" type="image/x-icon" href="https://tern321.github.io/img/favicon.ico">
 </head>
 <body>
-    <div class="container">
-		<div style="width:1700px; height:1px;"></div>
-		<div id="contentions"></div>
-		<div id="topics" class="topicsStyle"></div>
-		<div id="uiDiv" class="menuStyle">
-			<div>
-				<button class="UIButton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
-				<br />
-				<button class="UIButton" onclick="Controller.hideKeyboard()" id='hideButton'>hide</button>
-			</div>
-			<textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:56px;"></textarea>
-			<div>
-				<nobr>
-					<button class="UIButton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
-					<button class="UIButton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
-					<button class="UIButton" onclick="">перенести</button>
-					<button class="UIButton" onclick="ActionsController.import()">import</button>
-					<button class="UIButton" onclick="ActionsController.addLink()">Add Link</button>
-					<button class="UIButton" onclick="Controller.showLogin()">Show</button>
-					<button class="UIButton" onclick="Controller.copy()">Copy</button>
+	<p style="font-family: Consolas, monaco, monospace; font-size: 15px;">
+		<div class="container">
+			<div style="width:1700px; height:1px;"></div>
+			<div id="contentions"></div>
+			<div id="topics" class="topicsStyle"></div>
+			<div id="uiDiv" class="menuStyle">
+				<div>
+					<button class="UIButton" onclick="ActionsController.addContention()" id='addButton'>Добавить</button>
+					<br />
+					<button class="UIButton" onclick="Controller.hideKeyboard()" id='hideButton'>hide</button>
+				</div>
+				<textarea id="argumentTextArea" placeholder="Текст новой заметки" style="width:320px; height:56px;"></textarea>
+				<div>
+					<nobr>
+						<button class="UIButton" onclick="Controller.copy()">Copy</button>
+						<button class="UIButton" onclick="ActionsController.changeContention()" id='changeButton'>Изменить</button>
+						<button class="UIButton" onclick="ActionsController.createTopicFromContention()" style="background-color: #e6e6e6;">Топик</button>
+						<button class="UIButton" onclick="">перенести</button>
+						<button class="UIButton" onclick="ActionsController.import()">import</button>
+						<button class="UIButton" onclick="ActionsController.addLink()">Add Link</button>
+						<button class="UIButton" onclick="Controller.showLogin()">Show</button>
+						
 
-					<button class="UIColorButton" style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
-					<button class="UIColorButton" style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
-					<button class="UIColorButton" style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
-				</nobr>
-				<br />
-				<nobr>
-					<button class="UIButton" onclick="ActionsController.addUrl()">Add Url</button>
-					<button class="UIButton" onclick="ActionsController.deleteContention()">удалить</button>
-					<button class="UIButton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
-					<button class="UIButton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
-					<button class="UIButton" onclick="ActionsController.export()">export</button>
-					<button class="UIButton" onclick="Controller.reload()">Reload</button>
-					<button class="UIButton" onclick="Controller.copy()">Copy</button>
-					
-					<button class="UIColorButton" style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
-					<button class="UIColorButton" style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
-					<button class="UIColorButton" style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
-				</nobr>
-			</div>
-			<div>
-				<textarea class="LoginTextArea" id="loginTextArea" placeholder="логин"></textarea>
-				<br />
-				<textarea class="LoginTextArea" id="encriptionKeyTextArea" placeholder="ключ для шифрования"></textarea>
+						<button class="UIColorButton" style="background-color:#03fcbe;" onclick="ActionsController.changeContentionColor('#03fcbe')"> Text</button>
+						<button class="UIColorButton" style="background-color:#7bfc03;" onclick="ActionsController.changeContentionColor('#7bfc03')"> Text</button>
+						<button class="UIColorButton" style="background-color:#f8fc03;" onclick="ActionsController.changeContentionColor('#f8fc03')"> Text</button>
+					</nobr>
+					<br />
+					<nobr>
+						<button class="UIButton" onclick="Controller.copy()">Copy</button>
+						<button class="UIButton" onclick="ActionsController.addUrl()">Add Url</button>
+						<button class="UIButton" onclick="ActionsController.deleteContention()">удалить</button>
+						<button class="UIButton" onclick="ActionsController.addSelectedToArchive()">(archive)</button>
+						<button class="UIButton" onclick="ActionsController.collapceSelectedContention()" style="background-color: #9b9bff;">свернуть</button>
+						<button class="UIButton" onclick="ActionsController.export()">export</button>
+						<button class="UIButton" onclick="Controller.reload()">Reload</button>
+						
+						
+						<button class="UIColorButton" style="background-color:#FFF;" onclick="ActionsController.changeContentionColor('#FFF')"> Text</button>
+						<button class="UIColorButton" style="background-color:#fc03f0;" onclick="ActionsController.changeContentionColor('#fc03f0')"> Text</button>
+						<button class="UIColorButton" style="background-color:#fc3503;" onclick="ActionsController.changeContentionColor('#fc3503')"> Text</button>
+					</nobr>
+				</div>
+				<div>
+					<textarea class="LoginTextArea" id="loginTextArea" placeholder="логин"></textarea>
+					<br />
+					<textarea class="LoginTextArea" id="encriptionKeyTextArea" placeholder="ключ для шифрования"></textarea>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div id="minHeightDiv" style="width:1px; height:100px;"></div>
-	
-	<script>class ActionsController {
+		<div id="minHeightDiv" style="width:1px; height:100px;"></div>
+		
+		<script>class ActionsController {
     // selection
     static selectContention(e) {
         this.selectContentionById(e.getAttribute("id"));
@@ -735,6 +738,30 @@ class Controller {
     }
     static executeCommand(command) {
         Model.executeCommand(command);
+    }
+    static copy() {
+        var textToCopy = Controller.selectedcontention().url;
+        if (!textToCopy) {
+            textToCopy = Controller.selectedcontention().text;
+        }
+        console.log(textToCopy);
+        Controller.copyToClipboard(textToCopy);
+    }
+    static copyToClipboard(text) {
+        var textarea = document.createElement("textarea");
+        textarea.textContent = text;
+        textarea.style.position = "fixed";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            return document.execCommand("copy");
+        }
+        catch (ex) {
+            return false;
+        }
+        finally {
+            document.body.removeChild(textarea);
+        }
     }
 }
 Controller.topicId = "root";
@@ -1718,4 +1745,7 @@ class UpdateDataRequestController {
         });
     }
 }
-UpdateDataRequestController.updateDataRequest
+UpdateDataRequestController.updateDataRequestLock = false;
+UpdateDataRequestController.shouldSendUpdateDataRequest = false;
+UpdateDataRequestController.lastChangeTime = "0";
+//# s
