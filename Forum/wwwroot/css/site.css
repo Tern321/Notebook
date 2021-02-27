@@ -96,16 +96,19 @@
     position: absolute;
     border: 1px solid #000000;
     display: inline-block;
+/*    font-family: Consolas, monaco, monospace;
+    font-size: 15px;*/
 }
 
 .rawContentionElement {
     padding: 0px;
     border-left: 3px solid #000000;
     border-right: 3px solid #000000;
-
     min-width: 100px;
     max-width: 320px;
     position: relative;
+/*    font-family: Consolas, monaco, monospace;
+    font-size: 15px;*/
 }
 
 *, ::after, ::before {

@@ -210,8 +210,8 @@
         }
         else {
             var linkName = contention.url;
-            if (linkName.length > 38) {
-                linkName = linkName.substring(0, 38) + " ...";
+            if (linkName.length > 28) {
+                linkName = linkName.substring(0, 28) + " ...";
             }
             var str = '<a href="' + contention.url + '" target = "_blank" >' + linkName + "</a><br>" + contention.text;
             return str;
