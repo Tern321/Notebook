@@ -145,11 +145,10 @@ function mouseClick(e) {
         clearTimeout(pendingClick);
         pendingClick = 0;
     }
-    if (mousePressedTime() < 5) {
-        // mouse down click
+    if (e.type == "mousedown") {
         return true;
     }
-    if (mousePressedTime() > 1000) {
+    if (mousePressedTime() > 500) {
         // mouse selection event
         shouldSkipNextCtrlEvent = true;
         return true;

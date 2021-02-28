@@ -1170,11 +1170,10 @@ function mouseClick(e) {
         clearTimeout(pendingClick);
         pendingClick = 0;
     }
-    if (mousePressedTime() < 5) {
-        // mouse down click
+    if (e.type == "mousedown") {
         return true;
     }
-    if (mousePressedTime() > 1000) {
+    if (mousePressedTime() > 500) {
         // mouse selection event
         shouldSkipNextCtrlEvent = true;
         return true;
@@ -1847,28 +1846,4 @@ class UpdateDataRequestController {
                     json = JSON.stringify(requestData);
                 }
                 return fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': contentType },
-                    body: json
-                }).then(function (body) { return body.text(); }).then(function (data) {
-                    //console.log(data);
-                    if (data == "ok") {
-                        //console.log("data saved");
-                    }
-                    else {
-                        alert("страница потеряла актуальность, перезагрузите чтобы вносить изменения");
-                    }
-                }).catch(function (body) {
-                    UpdateDataRequestController.updateDataRequestLock = false;
-                    alert("Failed to update data");
-                });
-            });
-        });
-    }
-}
-UpdateDataRequestController.updateDataRequestLock = false;
-UpdateDataRequestController.shouldSendUpdateDataRequest = false;
-UpdateDataRequestController.lastChangeTime = "0";
-//# sourceMappingURL=UpdateDataRequestController.js.map 
-</script>
-    	
+                    method: 'POST
